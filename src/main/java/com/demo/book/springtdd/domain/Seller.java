@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
@@ -20,5 +21,8 @@ public class Seller {
 
     @Column(unique = true)
     private String username;
+
+    @Column(length = 1000)
+    private String hashedPassword;
 
 }

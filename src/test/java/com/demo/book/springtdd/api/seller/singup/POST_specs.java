@@ -3,6 +3,8 @@ package com.demo.book.springtdd.api.seller.singup;
 import com.demo.book.springtdd.SpringTddBookApplication;
 import com.demo.book.springtdd.api.seller.utils.EmailGenerator;
 import com.demo.book.springtdd.command.CreateSellerCommand;
+import com.demo.book.springtdd.domain.Seller;
+import com.demo.book.springtdd.domain.SellerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.demo.book.springtdd.api.seller.utils.EmailGenerator.generateEmail;
+import static com.demo.book.springtdd.api.seller.utils.PasswordGenerator.generatePassword;
 import static com.demo.book.springtdd.api.seller.utils.UsernameGenerator.generateUsername;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -172,6 +176,32 @@ public class POST_specs {
 
         //assert
         assertThat(response.getStatusCode().value()).isEqualTo(400);
-
     }
+
+    @Test
+    void 비밀번호를_올바르게_암호화한다(
+            @Autowired TestRestTemplate testRestTemplate,
+            @Autowired SellerRepository sellerRepository,
+            @Autowired PasswordEncoder passwordEncoder
+            ){
+        //arrange
+        var command = new CreateSellerCommand(generateEmail(), generateUsername(), generatePassword());
+
+        //act
+        testRestTemplate.postForEntity("/seller/signUp", command, Void.class);
+
+        //assert
+        Seller seller = sellerRepository
+                .findAll()
+                .stream()
+                .filter(x -> x.getEmail().equals(command.email()))
+                .findFirst()
+                .orElseThrow();
+
+        String actual = seller.getHashedPassword();
+
+        assertThat(actual).isNotNull();
+        assertThat(passwordEncoder.matches(command.password(), actual)).isTrue();
+    }
+
 }

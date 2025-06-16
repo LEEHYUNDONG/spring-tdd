@@ -7,12 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public record SellerSignUpController(SellerRepository sellerRepository) {
+public record SellerSignUpController(PasswordEncoder passwordEncoder,
+                                     SellerRepository sellerRepository) {
 
     private static final String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     private static final String usernameRegex = "^[a-zA-Z0-9_]{3,}$";
@@ -21,20 +23,23 @@ public record SellerSignUpController(SellerRepository sellerRepository) {
     @PostMapping("/seller/signUp")
     ResponseEntity<?> signUp(@RequestBody CreateSellerCommand command) {
         System.out.println("Received sign-up request: " + command);
-        if (isCommandNotValid(command))
-            return ResponseEntity.badRequest().build();
-
-        var seller = new Seller();
-        seller.setEmail(command.email());
-        seller.setUsername(command.username());
-
-        System.out.println("Received sign-up request: " + command);
-        try{
-            sellerRepository.save(seller);
-        } catch(DataIntegrityViolationException e){
+        if (isCommandNotValid(command)) {
             return ResponseEntity.badRequest().build();
         }
 
+        String hashedPassword = passwordEncoder.encode(command.password());
+        var seller = new Seller();
+        seller.setEmail(command.email());
+        seller.setUsername(command.username());
+        seller.setHashedPassword(hashedPassword);
+
+        System.out.println("seller " + seller.toString());
+        try{
+            sellerRepository.save(seller);
+            System.out.println("Received sign-up request: " + command);
+        } catch(DataIntegrityViolationException e){
+            return ResponseEntity.badRequest().build();
+        }
 
         return ResponseEntity.noContent().build();
     }

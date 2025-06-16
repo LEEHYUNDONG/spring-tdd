@@ -5,6 +5,6 @@ import java.util.UUID;
 public class EmailGenerator {
 
     public static String generateEmail() {
-        return UUID.randomUUID() + "@test.com";
+        return UUID.fromString(UUID.randomUUID().toString()).toString().replace("-", "") + "@test.com";
     }
 }

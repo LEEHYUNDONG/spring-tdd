@@ -1,12 +1,9 @@
 package com.demo.book.springtdd.api.seller.singup;
 
 import com.demo.book.springtdd.SpringTddBookApplication;
-import com.demo.book.springtdd.api.seller.utils.EmailGenerator;
 import com.demo.book.springtdd.command.CreateSellerCommand;
 import com.demo.book.springtdd.domain.Seller;
 import com.demo.book.springtdd.domain.SellerRepository;
-import org.apache.catalina.security.SecurityConfig;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

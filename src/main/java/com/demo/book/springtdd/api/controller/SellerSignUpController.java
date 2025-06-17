@@ -17,13 +17,14 @@ public record SellerSignUpController(PasswordEncoder passwordEncoder,
                                      SellerRepository sellerRepository) {
 
     private static final String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-    private static final String usernameRegex = "^[a-zA-Z0-9_]{3,}$";
-    private static final String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+    private static final String usernameRegex = "^[a-zA-Z0-9_]{3,20}$";
+    private static final String passwordRegex = "^(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$";
 
     @PostMapping("/seller/signUp")
     ResponseEntity<?> signUp(@RequestBody CreateSellerCommand command) {
         System.out.println("Received sign-up request: " + command);
         if (isCommandNotValid(command)) {
+            System.out.println("Invalid command: " + command);
             return ResponseEntity.badRequest().build();
         }
 
@@ -32,11 +33,8 @@ public record SellerSignUpController(PasswordEncoder passwordEncoder,
         seller.setEmail(command.email());
         seller.setUsername(command.username());
         seller.setHashedPassword(hashedPassword);
-
-        System.out.println("seller " + seller.toString());
         try{
             sellerRepository.save(seller);
-            System.out.println("Received sign-up request: " + command);
         } catch(DataIntegrityViolationException e){
             return ResponseEntity.badRequest().build();
         }

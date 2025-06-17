@@ -36,7 +36,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/issueToken", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerCommand(
                 email,
                 generateUsername(),
                 password
@@ -57,7 +57,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/issueToken", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerCommand(
                 email,
                 generateUsername(),
                 password
@@ -79,7 +79,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/issueToken", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerCommand(
                 email,
                 generateUsername(),
                 password
@@ -96,4 +96,50 @@ public class POST_specs {
         assertThat(actual).satisfies(conformsToJwtFormat());
     }
 
+    @Test
+    void 존재하지_않는_이메일_주소로_요청하면_400_Bad_Request_상태코드를_반환한다(
+            @Autowired TestRestTemplate client
+    ){
+        // arrange
+        String email = generateEmail();
+        String password = generatePassword();
+        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+                email,
+                generateUsername(),
+                password
+        ), Void.class);
+
+        // act
+        ResponseEntity<Void> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+                generateEmail(),
+                password
+        ), Void.class);
+
+        // assert
+        assertThat(response.getStatusCode().value()).isEqualTo(400);
+    }
+
+    @Test
+    void 잘못된_비밀번호로_요청하면_400_Bad_Request_상태코드를_반환한다(
+            @Autowired TestRestTemplate client
+    ){
+        // arrange
+        String email = generateEmail();
+        String password = generatePassword();
+        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+                email,
+                generateUsername(),
+                password
+        ), Void.class);
+
+        // act
+        String wrongPassword = generatePassword();
+        ResponseEntity<Void> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+                email,
+                wrongPassword
+        ), Void.class);
+
+        // assert
+        assertThat(response.getStatusCode().value()).isEqualTo(400);
+    }
 }

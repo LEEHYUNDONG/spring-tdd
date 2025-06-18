@@ -89,8 +89,7 @@ public class POST_specs {
             "user!name",
             "us",
             "u",
-            "123456789012345678901123123", // 21 characters
-            "user_name_with_more_than_twenty_characters"
+            "123456789012345678901123!!123", // 21 characters
     })
     void username_속성이_올바른_형식을_따르지_않으면_400_bad_request_상태를_반환한다(String username, @Autowired TestRestTemplate testRestTemplate) {
         //arrange

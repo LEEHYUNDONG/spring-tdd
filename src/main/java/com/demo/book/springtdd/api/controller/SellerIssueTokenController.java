@@ -1,6 +1,7 @@
 package com.demo.book.springtdd.api.controller;
 
 
+import com.demo.book.springtdd.config.JwtKeyHolder;
 import com.demo.book.springtdd.domain.Seller;
 import com.demo.book.springtdd.domain.SellerRepository;
 import com.demo.book.springtdd.query.IssueSellerToken;
@@ -19,13 +20,13 @@ import java.util.Optional;
 
 @RestController
 public record SellerIssueTokenController(
-        @Value("${security.jwt.secret}") String jwtSecret,
+        JwtKeyHolder jwtKeyHolder,
         PasswordEncoder passwordEncoder,
         SellerRepository sellerRepository
 ) {
 
     @PostMapping("/seller/issueToken")
-    ResponseEntity<AccessTokenCarrier> issueToken(@RequestBody IssueSellerToken issueSellerToken) {
+    public ResponseEntity<AccessTokenCarrier> issueToken(@RequestBody IssueSellerToken issueSellerToken) {
         return sellerRepository.findByEmail(issueSellerToken.email())
                 .filter(seller -> passwordEncoder.matches(
                         issueSellerToken.password(),
@@ -39,6 +40,6 @@ public record SellerIssueTokenController(
     private String composeToken() {
         return Jwts
                 .builder()
-                .signWith(new SecretKeySpec(jwtSecret.getBytes(), "HmacSHA256")).compact();
+                .signWith(jwtKeyHolder.secretKey()).compact();
     }
 }

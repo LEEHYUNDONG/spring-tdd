@@ -147,3 +147,37 @@ curl -d '{ "email":"seller1@example.com", "username":"seller1", "password":"sell
 - [x] username 속성에 이미 존재하는 사용자이름이 지정되면 400 Bad Request를 반환한다
 - [x] 비밀번호를 올바르게 암호화한다
 
+### 구매자 토큰 발행
+요청
+- 메서드: POST
+- 경로: /shopper/issueToken
+- 헤더
+```
+Content-Type: application/json
+```
+- 본문
+```
+IssueShopperToken{
+  email: string,
+  password: string
+}
+```
+```bash
+curl -d '{ "email":"shopper@example.com", "password":"shopper1password" }' \
+-H "Content-Type: application/json" \
+-i -X POST http://localhost:8080/seller/issueToken
+```
+성공 응답
+- 상태코드: 200 OK
+- 본문
+```
+AccessTokenCarrier{
+  "accessToken": string
+}
+```
+
+테스트
+- [x] ~올바르게 요청하면 200 OK 상태코드를 반환한다~
+- [x] 접근 토큰은 JWT 형식을 따른다
+- [] 존재하지 않는 이메일 주소로 요청하면 400 Bad Request 상태코드를 반환한다
+- [] 잘못된 비밀번호로 요청하면 400 Bad Request 상태코드를 반환한다

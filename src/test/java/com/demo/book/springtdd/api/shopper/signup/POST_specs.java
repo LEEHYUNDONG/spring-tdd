@@ -3,6 +3,7 @@ package com.demo.book.springtdd.api.shopper.signup;
 import com.demo.book.springtdd.command.CreateShopperCommand;
 import com.demo.book.springtdd.domain.SellerRepository;
 import com.demo.book.springtdd.domain.ShopperRepository;
+import com.demo.book.springtdd.query.IssueShopperToken;
 import com.demo.book.springtdd.utils.ApiTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.demo.book.springtdd.api.seller.utils;
+package com.demo.book.springtdd.api.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.ThrowingConsumer;

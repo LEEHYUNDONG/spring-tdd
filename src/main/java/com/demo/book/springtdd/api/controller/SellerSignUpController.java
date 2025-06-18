@@ -1,10 +1,9 @@
 package com.demo.book.springtdd.api.controller;
 
 import com.demo.book.springtdd.command.CreateSellerCommand;
+import com.demo.book.springtdd.command.CreateShopperCommand;
 import com.demo.book.springtdd.domain.Seller;
 import com.demo.book.springtdd.domain.SellerRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public record SellerSignUpController(PasswordEncoder passwordEncoder,
                                      SellerRepository sellerRepository) {
 
-    private static final String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    private static final String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
     private static final String usernameRegex = "^[a-zA-Z0-9_]{3,20}$";
     private static final String passwordRegex = "^(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$";
 

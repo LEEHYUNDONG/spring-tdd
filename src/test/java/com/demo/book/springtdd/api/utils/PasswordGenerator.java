@@ -1,4 +1,4 @@
-package com.demo.book.springtdd.api.seller.utils;
+package com.demo.book.springtdd.api.utils;
 
 
 import java.util.UUID;

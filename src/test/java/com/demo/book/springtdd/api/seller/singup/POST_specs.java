@@ -1,28 +1,24 @@
 package com.demo.book.springtdd.api.seller.singup;
 
-import com.demo.book.springtdd.SpringTddBookApplication;
 import com.demo.book.springtdd.command.CreateSellerCommand;
 import com.demo.book.springtdd.domain.Seller;
 import com.demo.book.springtdd.domain.SellerRepository;
+import com.demo.book.springtdd.utils.ApiTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.demo.book.springtdd.api.seller.utils.EmailGenerator.generateEmail;
-import static com.demo.book.springtdd.api.seller.utils.PasswordGenerator.generatePassword;
-import static com.demo.book.springtdd.api.seller.utils.UsernameGenerator.generateUsername;
+import static com.demo.book.springtdd.api.utils.EmailGenerator.generateEmail;
+import static com.demo.book.springtdd.api.utils.PasswordGenerator.generatePassword;
+import static com.demo.book.springtdd.api.utils.UsernameGenerator.generateUsername;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-@SpringBootTest(
-        classes = SpringTddBookApplication.class,
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-)
+@ApiTest
 @DisplayName("POST /seller/signUp")
 public class POST_specs {
 

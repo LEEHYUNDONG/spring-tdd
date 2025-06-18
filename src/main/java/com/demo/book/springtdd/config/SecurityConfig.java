@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/seller/signUp").permitAll()
                         .requestMatchers("/seller/issueToken").permitAll()
+                        .requestMatchers("/seller/me").permitAll()
                         .requestMatchers("/shopper/signUp").permitAll()
                         .requestMatchers("/shopper/issueToken").permitAll()
                 ).build();

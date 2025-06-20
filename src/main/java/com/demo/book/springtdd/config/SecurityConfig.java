@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 
 import javax.crypto.SecretKey;
@@ -21,18 +23,27 @@ public class SecurityConfig {
     }
 
     @Bean
-    DefaultSecurityFilterChain securityFilterChain(HttpSecurity http)
+    JwtDecoder jwtDecoder(JwtKeyHolder jwtKeyHolder) {
+        return NimbusJwtDecoder.withSecretKey(jwtKeyHolder.secretKey())
+                .build();
+    }
+
+    @Bean
+    DefaultSecurityFilterChain securityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder)
         throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .oauth2ResourceServer(c -> c.jwt(jwt -> jwt.decoder(jwtDecoder)))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/seller/signUp").permitAll()
                         .requestMatchers("/seller/issueToken").permitAll()
-                        .requestMatchers("/seller/me").permitAll()
+                        .requestMatchers("/seller/me").authenticated()
                         .requestMatchers("/shopper/signUp").permitAll()
                         .requestMatchers("/shopper/issueToken").permitAll()
                 ).build();
     }
+
+
 
     @Bean
     JwtKeyHolder jwtKeyHolder(@Value("${security.jwt.secret}") String jwtSecret) {

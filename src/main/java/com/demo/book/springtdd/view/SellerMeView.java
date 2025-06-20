@@ -1,4 +1,6 @@
 package com.demo.book.springtdd.view;
 
-public record SellerMeView(String id, String email, String username) {
+import java.util.UUID;
+
+public record SellerMeView(UUID id, String email, String username) {
 }

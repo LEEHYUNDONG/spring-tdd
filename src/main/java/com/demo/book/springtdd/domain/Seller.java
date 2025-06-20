@@ -8,13 +8,18 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Data
 public class Seller {
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
+    private Long dataKey;
+
+    @Column(unique = true)
+    private UUID id;
 
     @Column(unique = true)
     private String email;

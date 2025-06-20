@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 import static com.demo.book.springtdd.api.UserPropertyValidator.*;
 
 @RestController
@@ -24,10 +26,13 @@ public record SellerSignUpController(PasswordEncoder passwordEncoder,
         }
 
         String hashedPassword = passwordEncoder.encode(command.password());
+        UUID id = UUID.randomUUID();
         var seller = new Seller();
         seller.setEmail(command.email());
         seller.setUsername(command.username());
         seller.setHashedPassword(hashedPassword);
+
+        seller.setId(id);
         sellerRepository.save(seller);
 
         return ResponseEntity.noContent().build();

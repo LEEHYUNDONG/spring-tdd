@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import java.util.UUID;
 
 import static com.demo.book.springtdd.api.UserPropertyValidator.*;
 
 
 @RestController
-public record ShopperSignUpController(ShopperRepository shopperRepository, PasswordEncoder passwordEncoder) {
+public record ShopperSignUpController(ShopperRepository shopperRepository,
+                                      PasswordEncoder passwordEncoder) {
 
     @PostMapping("/shopper/signUp")
     public ResponseEntity<?> signUp(@RequestBody CreateShopperCommand command) {
@@ -23,14 +25,15 @@ public record ShopperSignUpController(ShopperRepository shopperRepository, Passw
             return ResponseEntity.badRequest()
                     .build();
         }
-
+        UUID id = UUID.randomUUID();
         Shopper shopper = new Shopper();
+
         shopper.setEmail(command.email());
         shopper.setUsername(command.username());
         shopper.setHashedPassword(passwordEncoder.encode(command.password()));
+        shopper.setId(id);
 
         shopperRepository.save(shopper);
-
 
         return ResponseEntity.noContent()
                 .build();

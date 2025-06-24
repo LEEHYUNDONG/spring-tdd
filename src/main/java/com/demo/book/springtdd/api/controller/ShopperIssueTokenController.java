@@ -29,6 +29,7 @@ public record ShopperIssueTokenController(JwtKeyHolder jwtKeyHolder, PasswordEnc
     private String composeToken() {
         return Jwts
                 .builder()
+                .setSubject("shopper")
                 .signWith(jwtKeyHolder.secretKey()).compact();
     }
 

@@ -205,3 +205,28 @@ SellerMeView {
 - [x] 서로 다른 판매자의 식별자는 서로 다르다
 - [x] 같은 판매자의 식별자는 항상 같다
 - [x] 판매자의 기본 정보가 올바르게 설정된다
+
+
+### 구매자 정보조회
+```bash
+curl -i -X GET 'http://localhost:8080/shopper/me' \
+-H 'Authorization: Bearer {accessToken}'
+```
+
+성공 응답
+- 상태코드: 200 OK
+- 본문
+```
+ShopperMeView {
+    id: String(UUID),
+    email: string,
+    username: string
+}
+```
+
+테스트
+- [] 올바르게 요청하면 200 OK  상태코드를 반환한다
+- [] 접근 토큰을 사용하지 않으면 401 Unauthorized 상태코드를 반환한다.
+- [] 서로 다른 판매자의 식별자는 서로 다르다
+- [] 같은 판매자의 식별자는 항상 같다
+- [] 구매자의 기본 정보가 올바르게 설정된다

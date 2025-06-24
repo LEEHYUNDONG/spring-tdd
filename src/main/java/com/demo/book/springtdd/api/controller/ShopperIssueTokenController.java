@@ -1,6 +1,7 @@
 package com.demo.book.springtdd.api.controller;
 
 import com.demo.book.springtdd.config.JwtKeyHolder;
+import com.demo.book.springtdd.domain.Shopper;
 import com.demo.book.springtdd.domain.ShopperRepository;
 import com.demo.book.springtdd.query.IssueShopperToken;
 import com.demo.book.springtdd.result.AccessTokenCarrier;
@@ -20,16 +21,16 @@ public record ShopperIssueTokenController(JwtKeyHolder jwtKeyHolder, PasswordEnc
                 .filter(shopper -> passwordEncoder.matches(
                         qeury.password(),
                         shopper.getHashedPassword()))
-                .map(shopper -> composeToken())
+                .map(shopper -> composeToken(shopper))
                 .map(AccessTokenCarrier::new)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    private String composeToken() {
+    private String composeToken(Shopper shopper) {
         return Jwts
                 .builder()
-                .setSubject("shopper")
+                .setSubject(shopper.getId().toString())
                 .signWith(jwtKeyHolder.secretKey()).compact();
     }
 

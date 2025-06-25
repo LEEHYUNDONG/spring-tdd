@@ -97,9 +97,22 @@ public class GET_specs {
     }
 
     @Test
-    void 구매자의_기본_정보가_올바르게_설정된다() {
+    void 구매자의_기본_정보가_올바르게_설정된다(@Autowired TestFixture fixture) {
+        // Arrange
+        String email = generateEmail();
+        String password = generatePassword();
 
+        String username = generateUsername();
+        fixture.createShopper(email, username, password);
+        fixture.setShopperAsDefaultUser(email, password);
+
+        // Act
+        ShopperMeView actual = requireNonNull(fixture.client()
+                .getForObject("/shopper/me", ShopperMeView.class));
+
+        // Assert
+        assertThat(actual.email()).isEqualTo(email);
+        assertThat(actual.username()).isEqualTo(username);
     }
-
 
 }

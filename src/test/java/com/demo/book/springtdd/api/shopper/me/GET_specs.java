@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static com.demo.book.springtdd.api.utils.EmailGenerator.generateEmail;
 import static com.demo.book.springtdd.api.utils.PasswordGenerator.generatePassword;
 import static com.demo.book.springtdd.api.utils.UsernameGenerator.generateUsername;
@@ -42,6 +45,7 @@ public class GET_specs {
 
     @Test
     void 접근_토큰을_사용하지_않으면_401_Unauthorized_상태코드를_반환한다(@Autowired TestFixture fixture) {
+        // Arrange
         // Act
         ResponseEntity<Void> response = fixture.client().exchange(
                 get("/shopper/me").build(),
@@ -104,7 +108,7 @@ public class GET_specs {
 
         String username = generateUsername();
         fixture.createShopper(email, username, password);
-        fixture.setShopperAsDefaultUser(email, password);
+        fixture.setShopperDefaultAuthorization(email, password);
 
         // Act
         ShopperMeView actual = requireNonNull(fixture.client()
@@ -114,5 +118,6 @@ public class GET_specs {
         assertThat(actual.email()).isEqualTo(email);
         assertThat(actual.username()).isEqualTo(username);
     }
+
 
 }

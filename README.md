@@ -230,3 +230,76 @@ ShopperMeView {
 - [x] 서로 다른 판매자의 식별자는 서로 다르다
 - [x] 같은 판매자의 식별자는 항상 같다
 - [x] 구매자의 기본 정보가 올바르게 설정된다
+
+### 판매자 상품 등록
+요청
+- 메서드: POST
+- 경로: /seller/product
+- 헤더
+```Content-Type: application/json
+Authorization: Bearer {accessToken}
+```
+- 본문
+```
+CreateProductCommand {
+  name: string,
+  price: number,
+  description: string
+}
+```
+
+```bash
+curl -d '{ "name":"상품1", "price":1000, "description":"상품1 설명" }' \
+-H "Content-Type: application/json"
+```
+
+성공 응답
+- 상태코드: 201 Created
+- 헤더
+```
+Location: /seller/products/{productId}
+```
+
+테스트
+- [x] 올바르게 요청하면 201 Created 상태코드를 반환한다
+- [x] 판매자가 아닌 사용자가 요청하면 403 Forbidden 상태코드를 반환한다
+- [ ] imageUri 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
+- [ ] 올바르게 요청하면 등록된 상품 정보에 접근하는 Location 헤더를 반환한다
+
+
+### 판매자 상품 조회
+요청
+- 메서드: GET
+- 경로: /seller/product/{productId}
+- 헤더
+```
+Authorization: Bearer {accessToken}
+```
+
+```bash
+curl -i -X GET 'http://localhost:8080/seller/product/{productId}' \
+- H "Authorization: Bearer {accessToken}"
+```
+
+성공 응답
+- 상태코드: 201 Created
+- 본문
+```SellerProductView {
+  id: String(UUID),
+  name: string,
+  imageUri: string,
+  description: string
+  priceAmount: number,
+  stockQuantity: number,
+  registeredTimeUtc: string(YYYY-MM-DDTHH:mm:ss.sss)
+}
+```
+
+
+테스트
+- [x] 올바르게 요청하면 200 OK 상태코드를 반환한다
+- [x ] 판매자가 아닌 사용자가 요청하면 403 Forbidden 상태코드를 반환한다
+- [ ] 존재하지 않는 상품 식별자로 요청하면 404 Not Found 상태코드를 반환한다
+- [ ] 다른 판매자가 등록한 상품 식별자로 요청하면 404 Not Found 상태코드를 반환한다
+- [ ] 상품 식별자를 올바르게 반환한다
+- [ ] 상품 정보를 올바르게 반환한다

@@ -9,6 +9,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.util.UUID;
+
 import static com.demo.book.springtdd.api.utils.EmailGenerator.generateEmail;
 import static com.demo.book.springtdd.api.utils.PasswordGenerator.generatePassword;
 import static com.demo.book.springtdd.api.utils.RegisterProductCommandGenerator.generateRegisterProductCommand;
@@ -100,6 +103,19 @@ public record TestFixture(TestRestTemplate client) {
     public String createProductForSellerAndGetLocation() {
         var command = generateRegisterProductCommand();
         ResponseEntity<Void> response = client.postForEntity("/seller/products", command, Void.class);
-        return response.getHeaders().getLocation().toString();
+        return requireNonNull(response.getHeaders().getLocation()).toString();
+    }
+
+    public UUID registerProduct() {
+        var command = generateRegisterProductCommand();
+        ResponseEntity<Void> response = client.postForEntity("/seller/products", command, Void.class);
+
+        URI location = response.getHeaders().getLocation();
+
+        String path = requireNonNull(location).getPath();
+        String id = path.substring("/seller/procucts/".length());
+        return UUID.fromString(id);
+
+
     }
 }

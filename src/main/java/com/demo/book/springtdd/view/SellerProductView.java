@@ -1,14 +1,16 @@
 package com.demo.book.springtdd.view;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record SellerProductView(
-        String id,
-        String productName,
+        UUID id,
+        String name,
         String imageUri,
         String description,
         BigDecimal priceAmount,
-        int stockQuantity,
-        String registeredTimeUtc
+        int stockQuantiy,
+        LocalDateTime createdAt
 ) {
 }

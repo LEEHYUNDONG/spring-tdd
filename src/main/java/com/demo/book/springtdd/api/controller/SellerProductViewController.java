@@ -29,7 +29,7 @@ public record SellerProductViewController(
         if(seller.isEmpty()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        if(productId.equals(id.toString()) == false) {
+        if(!productId.equals(id.toString())) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 

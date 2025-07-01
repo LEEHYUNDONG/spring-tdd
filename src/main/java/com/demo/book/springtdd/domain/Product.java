@@ -18,6 +18,9 @@ public class Product {
     private UUID id;
 
     @Column
+    private UUID sellerId;
+
+    @Column
     private String productName;
 
     @Column(unique = true)

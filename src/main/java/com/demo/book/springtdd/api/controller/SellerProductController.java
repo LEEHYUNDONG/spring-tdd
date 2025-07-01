@@ -20,7 +20,7 @@ import java.util.UUID;
 public record SellerProductController(SellerRepository sellerRepository, ProductsRepository productsRepository) {
 
     @PostMapping("/seller/products")
-    ResponseEntity<?> addProduct(Principal user, @RequestBody RegisterProductCommand command) {
+    ResponseEntity<?> addProduct(Principal user, @RequestBody RegisterProductCommand command, Principal principal) {
         UUID id = UUID.fromString(user.getName());
         Optional<Seller> seller = sellerRepository.findById(id);
 
@@ -35,6 +35,7 @@ public record SellerProductController(SellerRepository sellerRepository, Product
         Product product = new Product();
         product.setId(UUID.fromString(user.getName()));
         product.setProductName(command.productName());
+        product.setSellerId(UUID.fromString(principal.getName()));
         product.setImageUri(command.imageUri());
         product.setDescription(command.description());
         product.setPriceAmount(command.priceAmount());

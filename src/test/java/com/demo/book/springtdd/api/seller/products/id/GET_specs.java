@@ -4,15 +4,18 @@ import com.demo.book.springtdd.command.RegisterProductCommand;
 import com.demo.book.springtdd.testfixture.TestFixture;
 import com.demo.book.springtdd.utils.ApiTest;
 import com.demo.book.springtdd.view.SellerProductView;
-import org.assertj.core.api.ThrowingConsumer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import static com.demo.book.springtdd.api.utils.RegisterProductCommandGenerator.generateRegisterProductCommand;
 import static com.demo.book.springtdd.utils.ProductAssertions.isDerivedFrom;
+import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ApiTest
@@ -79,6 +82,7 @@ public class GET_specs {
     void 상품_등록_시각을_올바르게_반환한다(@Autowired TestFixture fixture) {
         // Arrange
         fixture.createSellerThenSetAsDefaultUser();
+        LocalDateTime referenceTime = LocalDateTime.now(UTC);
         RegisterProductCommand command = generateRegisterProductCommand();
         UUID id = fixture.registerProduct(command);
 
@@ -86,7 +90,8 @@ public class GET_specs {
         SellerProductView actual = fixture.client().getForObject("/seller/products/" + id, SellerProductView.class);
 
         // Assert
-        assertThat(actual.createdAt()).isNotNull();
+        assertThat(actual.registeredAt())
+                .isCloseTo(referenceTime, within(1, ChronoUnit.SECONDS)); // 1초 이내의 오차 허용
     }
 
 }

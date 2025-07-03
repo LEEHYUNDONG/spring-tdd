@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+import static java.time.ZoneOffset.UTC;
 
 @RestController
 public record SellerProductController(SellerRepository sellerRepository, ProductsRepository productsRepository) {
@@ -40,6 +43,7 @@ public record SellerProductController(SellerRepository sellerRepository, Product
         product.setDescription(command.description());
         product.setPriceAmount(command.priceAmount());
         product.setStockQuantity(command.stockQunatity());
+        product.setRegisteredAt(LocalDateTime.now(UTC));
         productsRepository.save(product);
 
         URI location = URI.create("/seller/products/" + product.getId());

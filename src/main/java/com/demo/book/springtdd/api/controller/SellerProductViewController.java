@@ -29,7 +29,7 @@ public record SellerProductViewController(
                         product.getDescription(),
                         product.getPriceAmount(),
                         product.getStockQuantity(),
-                        null
+                        product.getRegisteredAt()
                 ))
                 .map(product -> ResponseEntity.ok(product))
                 .orElseGet(() -> ResponseEntity.notFound().build());

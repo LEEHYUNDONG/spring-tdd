@@ -11,6 +11,6 @@ public record SellerProductView(
         String description,
         BigDecimal priceAmount,
         int stockQuantity,
-        LocalDateTime createdAt
+        LocalDateTime registeredAt
 ) {
 }

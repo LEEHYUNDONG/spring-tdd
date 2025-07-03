@@ -2,8 +2,10 @@ package com.demo.book.springtdd.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -34,5 +36,7 @@ public class Product {
 
     @Column
     private int stockQuantity;
+
+    private LocalDateTime registeredAt;
 
 }

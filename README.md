@@ -303,4 +303,44 @@ curl -i -X GET 'http://localhost:8080/seller/product/{productId}' \
 - [x] 다른 판매자가 등록한 상품 식별자로 요청하면 404 Not Found 상태코드를 반환한다
 - [x] 상품 식별자를 올바르게 반환한다
 - [x] 상품 정보를 올바르게 반환한다
+- [x] 상품 등록 시각을 올바르게 반환한다
+
+
+### 판매자 상품 목록 조회
+요청
+- 메서드: GET
+- 경로: /seller/products
+- 헤더
+```Authorization: Bearer {accessToken}
+```
+
+```bash
+curl -i -X GET 'http://localhost:8080/seller/products' \
+              'Authorization': 'Bearer {accessToken}'
+```
+
+응답
+성공응답
+- 상태코드: 200 OK
+- 본문
+```
+ArrayCarrier<SellerProductView> {
+  items: [SellerProductView {
+    id: String(UUID),
+    name: string,
+    imageUri: string,
+    description: string,
+    priceAmount: number,
+    stockQuantity: number,
+    registeredTimeUtc: string(YYYY-MM-DDTHH:mm:ss.sss)
+  }]
+}
+```
+
+요구사항
+- [ ] 올바르게 요청하면 200 OK 상태코드를 반환한다
+- [ ] 판매자가 등록한 상품 목록을 반환한다
+- [ ] 다른 판매자가 등록한 상품이 포함되지 않는다
+- [ ] 상품 정보를 올바르게 반환한다
 - [ ] 상품 등록 시각을 올바르게 반환한다
+- [ ] 상품 목록을 등록 시점 역순으로 정렬한다

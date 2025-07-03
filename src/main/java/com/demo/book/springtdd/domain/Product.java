@@ -21,7 +21,7 @@ public class Product {
     private UUID sellerId;
 
     @Column
-    private String productName;
+    private String name;
 
     @Column(unique = true)
     private String imageUri;

@@ -2,9 +2,7 @@ package com.demo.book.springtdd.api.controller;
 
 import com.demo.book.springtdd.domain.Product;
 import com.demo.book.springtdd.domain.ProductsRepository;
-import com.demo.book.springtdd.domain.Seller;
-import com.demo.book.springtdd.domain.SellerRepository;
-import org.springframework.http.HttpStatus;
+import com.demo.book.springtdd.view.SellerProductView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,23 +14,25 @@ import java.util.UUID;
 
 @RestController
 public record SellerProductViewController(
-        SellerRepository sellerRepository,
         ProductsRepository productsRepository
 ) {
 
-    @GetMapping("/seller/products/{productId}")
-    public ResponseEntity<?> viewProducts(@PathVariable String productId, Principal user) {
-        UUID id = UUID.fromString(user.getName());
-        Optional<Seller> seller = sellerRepository.findById(id);
-        System.out.println("seller = " + seller);
+    @GetMapping("/seller/products/{id}")
+    public ResponseEntity<?> viewProducts(@PathVariable UUID id, Principal user) {
+        UUID sellerId = UUID.fromString(user.getName());
+        return productsRepository.findById(id)
+                .filter(product -> product.getSellerId().equals(sellerId))
+                .map(product -> new SellerProductView(
+                        product.getId(),
+                        product.getName(),
+                        product.getImageUri(),
+                        product.getDescription(),
+                        product.getPriceAmount(),
+                        product.getStockQuantity(),
+                        null
+                ))
+                .map(product -> ResponseEntity.ok(product))
+                .orElseGet(() -> ResponseEntity.notFound().build());
 
-        if(seller.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        if(!productId.equals(id.toString())) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        return ResponseEntity.ok().build();
     }
 }

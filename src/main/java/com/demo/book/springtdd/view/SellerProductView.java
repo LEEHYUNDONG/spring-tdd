@@ -10,7 +10,7 @@ public record SellerProductView(
         String imageUri,
         String description,
         BigDecimal priceAmount,
-        int stockQuantiy,
+        int stockQuantity,
         LocalDateTime createdAt
 ) {
 }

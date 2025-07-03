@@ -1,6 +1,7 @@
 package com.demo.book.springtdd.testfixture;
 
 import com.demo.book.springtdd.command.CreateShopperCommand;
+import com.demo.book.springtdd.command.RegisterProductCommand;
 import com.demo.book.springtdd.query.IssueShopperToken;
 import com.demo.book.springtdd.result.AccessTokenCarrier;
 import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
@@ -107,7 +108,12 @@ public record TestFixture(TestRestTemplate client) {
     }
 
     public UUID registerProduct() {
-        var command = generateRegisterProductCommand();
+        RegisterProductCommand command = generateRegisterProductCommand();
+        return registerProduct(command);
+    }
+
+    public UUID registerProduct(RegisterProductCommand command) {
+
         ResponseEntity<Void> response = client.postForEntity("/seller/products", command, Void.class);
 
         URI location = response.getHeaders().getLocation();
@@ -115,7 +121,5 @@ public record TestFixture(TestRestTemplate client) {
         String path = requireNonNull(location).getPath();
         String id = path.substring("/seller/procucts/".length());
         return UUID.fromString(id);
-
-
     }
 }

@@ -20,9 +20,9 @@ import java.util.UUID;
 public record SellerProductController(SellerRepository sellerRepository, ProductsRepository productsRepository) {
 
     @PostMapping("/seller/products")
-    ResponseEntity<?> addProduct(Principal user, @RequestBody RegisterProductCommand command, Principal principal) {
-        UUID id = UUID.fromString(user.getName());
-        Optional<Seller> seller = sellerRepository.findById(id);
+    ResponseEntity<?> addProduct(@RequestBody RegisterProductCommand command, Principal principal) {
+        UUID sellerId = UUID.fromString(principal.getName());
+        Optional<Seller> seller = sellerRepository.findById(sellerId);
 
         if(seller.isEmpty()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -31,11 +31,11 @@ public record SellerProductController(SellerRepository sellerRepository, Product
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .build();
         }
-
-        Product product = new Product();
-        product.setId(UUID.fromString(user.getName()));
-        product.setProductName(command.productName());
-        product.setSellerId(UUID.fromString(principal.getName()));
+        UUID id = UUID.randomUUID();
+        var product = new Product();
+        product.setId(id);
+        product.setName(command.name());
+        product.setSellerId(sellerId);
         product.setImageUri(command.imageUri());
         product.setDescription(command.description());
         product.setPriceAmount(command.priceAmount());

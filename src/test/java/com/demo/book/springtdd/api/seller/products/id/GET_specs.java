@@ -1,15 +1,18 @@
 package com.demo.book.springtdd.api.seller.products.id;
 
+import com.demo.book.springtdd.command.RegisterProductCommand;
 import com.demo.book.springtdd.testfixture.TestFixture;
 import com.demo.book.springtdd.utils.ApiTest;
 import com.demo.book.springtdd.view.SellerProductView;
+import org.assertj.core.api.ThrowingConsumer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
+import static com.demo.book.springtdd.api.utils.RegisterProductCommandGenerator.generateRegisterProductCommand;
+import static com.demo.book.springtdd.utils.ProductAssertions.isDerivedFrom;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ApiTest
@@ -49,13 +52,41 @@ public class GET_specs {
     void 존재하지_않는_상품_식별자로_요청하면_404_Not_Found_상태코드를_반환한다(@Autowired TestFixture fixture) {
         // Arrange
         fixture.createSellerThenSetAsDefaultUser();
-        String nonExistentProductId = "counterproductive"; // 예시로 사용
         fixture.createProductForSellerAndGetLocation(); // 실제로는 존재하는 상품을 생성
 
         // Act
-        var response = fixture.client().getForEntity("/seller/products/" + nonExistentProductId, Void.class);
+        var response = fixture.client().getForEntity("/seller/products/" + UUID.randomUUID(), Void.class);
 
         // Assert
         assertThat(response.getStatusCode().value()).isEqualTo(404);
     }
+
+    @Test
+    void 올바른_상품_식별자로_요청하면_상품_정보를_반환한다(@Autowired TestFixture fixture) {
+        // Arrange
+        fixture.createSellerThenSetAsDefaultUser();
+        RegisterProductCommand command = generateRegisterProductCommand();
+        UUID id = fixture.registerProduct(command);
+
+        // Act
+        SellerProductView actual = fixture.client().getForObject("/seller/products/" + id, SellerProductView.class);
+
+        // Assert
+        assertThat(actual).satisfies(isDerivedFrom(command));
+    }
+
+    @Test
+    void 상품_등록_시각을_올바르게_반환한다(@Autowired TestFixture fixture) {
+        // Arrange
+        fixture.createSellerThenSetAsDefaultUser();
+        RegisterProductCommand command = generateRegisterProductCommand();
+        UUID id = fixture.registerProduct(command);
+
+        // Act
+        SellerProductView actual = fixture.client().getForObject("/seller/products/" + id, SellerProductView.class);
+
+        // Assert
+        assertThat(actual.createdAt()).isNotNull();
+    }
+
 }

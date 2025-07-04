@@ -2,6 +2,8 @@ package com.demo.book.springtdd.api.controller;
 
 import com.demo.book.springtdd.domain.Product;
 import com.demo.book.springtdd.domain.ProductsRepository;
+import com.demo.book.springtdd.domain.Seller;
+import com.demo.book.springtdd.view.ArrayCarrier;
 import com.demo.book.springtdd.view.SellerProductView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +33,25 @@ public record SellerProductViewController(
                         product.getStockQuantity(),
                         product.getRegisteredAt()
                 ))
-                .map(product -> ResponseEntity.ok(product))
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
+    @GetMapping("/seller/products")
+    ResponseEntity<?> getProducts() {
+        SellerProductView[] items = productsRepository
+                .findAll()
+                .stream()
+                .map(product -> new SellerProductView(
+                        product.getId(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        0,
+                        null))
+                .toArray(SellerProductView[]::new);
+
+        return ResponseEntity.ok(new ArrayCarrier<SellerProductView>(items));
     }
 }

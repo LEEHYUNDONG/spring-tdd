@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import static com.demo.book.springtdd.api.utils.EmailGenerator.generateEmail;
@@ -121,5 +122,14 @@ public record TestFixture(TestRestTemplate client) {
         String path = requireNonNull(location).getPath();
         String id = path.substring("/seller/procucts/".length());
         return UUID.fromString(id);
+    }
+
+    public void createProduct(String productName) {
+
+    }
+
+    public List<UUID> registerProducts() {
+
+        return List.of(registerProduct(), registerProduct(), registerProduct());
     }
 }

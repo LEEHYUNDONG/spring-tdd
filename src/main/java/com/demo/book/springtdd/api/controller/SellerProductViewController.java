@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,34 +25,35 @@ public record SellerProductViewController(
         UUID sellerId = UUID.fromString(user.getName());
         return productsRepository.findById(id)
                 .filter(product -> product.getSellerId().equals(sellerId))
-                .map(product -> new SellerProductView(
-                        product.getId(),
-                        product.getName(),
-                        product.getImageUri(),
-                        product.getDescription(),
-                        product.getPriceAmount(),
-                        product.getStockQuantity(),
-                        product.getRegisteredAt()
-                ))
+                .map(SellerProductViewController::convertToView)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/seller/products")
-    ResponseEntity<?> getProducts() {
+    ResponseEntity<?> getProducts(Principal user) {
+        UUID sellerId = UUID.fromString(user.getName()); // Replace with actual seller ID retrieval logic
+
         SellerProductView[] items = productsRepository
-                .findAll()
+                .findBySellerId(sellerId)
                 .stream()
-                .map(product -> new SellerProductView(
-                        product.getId(),
-                        null,
-                        null,
-                        null,
-                        null,
-                        0,
-                        null))
+                .map(SellerProductViewController::convertToView)
+                .sorted(Comparator.comparing(SellerProductView::registeredAt).reversed())
                 .toArray(SellerProductView[]::new);
 
         return ResponseEntity.ok(new ArrayCarrier<SellerProductView>(items));
     }
+
+    private static SellerProductView convertToView(Product product) {
+        return new SellerProductView(
+                product.getId(),
+                product.getName(),
+                product.getImageUri(),
+                product.getDescription(),
+                product.getPriceAmount(),
+                product.getStockQuantity(),
+                product.getRegisteredAt()
+        );
+    }
+
 }

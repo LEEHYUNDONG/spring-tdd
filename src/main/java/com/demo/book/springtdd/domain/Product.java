@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Data
+@Table(indexes = @Index(columnList = "sellerId"))
 public class Product {
 
     @Id

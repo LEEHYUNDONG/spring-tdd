@@ -31,6 +31,7 @@ public record ShopperIssueTokenController(JwtKeyHolder jwtKeyHolder, PasswordEnc
         return Jwts
                 .builder()
                 .setSubject(shopper.getId().toString())
+                .claim("scp", "shopper")
                 .signWith(jwtKeyHolder.secretKey()).compact();
     }
 

@@ -311,7 +311,8 @@ curl -i -X GET 'http://localhost:8080/seller/product/{productId}' \
 - 메서드: GET
 - 경로: /seller/products
 - 헤더
-```Authorization: Bearer {accessToken}
+```
+Authorization: Bearer {accessToken}
 ```
 
 ```bash
@@ -344,3 +345,52 @@ ArrayCarrier<SellerProductView> {
 - [x] 상품 정보를 올바르게 반환한다
 - [x] 상품 등록 시각을 올바르게 반환한다
 - [x] 상품 목록을 등록 시점 역순으로 정렬한다
+
+
+### 구매자 상품 탐색 API 명세
+요청
+- 메서드: GET 
+- 경로: /shopper/products
+- 쿼리 매개변수: continuationToken: string?
+- 헤더
+
+```
+Authorization: Bearer {accessToken}
+```
+
+```bash
+curl -i -X GET 'http://localhost:8080/shopper/products' \
+              -H 'Authorization
+: Bearer {accessToken}'
+```
+
+성공 응답
+- 상태코드: 200 OK
+- 본문
+```
+ArrayCarrier<ShopperProductView> {
+  items: [ProductView {
+    id: String(UUID),
+    seller: SellerView {
+      id: String(UUID),
+      username: string
+    },
+    name: string,
+    imageUri: string,
+    description: string,
+    priceAmount: number,
+    stockQuantity: number,
+  }],
+  contunuationToken: string
+}
+```
+요구사항
+- [x] 올바르게 요청하면 200 OK 상태코드를 반환한다
+- [x] 판매자 접근 토큰을 사용하면 403 Forbidden 상태코드를 반환한다
+- [x] 첫 번째 페이지의 상품을 반환한다
+- [x] 상품 목록을 등록 시점 역순으로 정렬한다
+- [x] 상품 속성을 올바르게 반환한다
+- [] 판매자 정보를 올바르게 반환한다
+- [] 두 번째 페이지를 올바르게 반환한다
+- [] 마지막 페이지를 올바르게 반환한다
+- [] continuationToken 매개변수에 빈 문자열이 지정되면 첫 번째 페이지를 반환한다

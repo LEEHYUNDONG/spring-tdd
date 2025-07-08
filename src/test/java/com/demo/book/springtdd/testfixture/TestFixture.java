@@ -2,6 +2,7 @@ package com.demo.book.springtdd.testfixture;
 
 import com.demo.book.springtdd.command.CreateShopperCommand;
 import com.demo.book.springtdd.command.RegisterProductCommand;
+import com.demo.book.springtdd.domain.ProductsRepository;
 import com.demo.book.springtdd.query.IssueShopperToken;
 import com.demo.book.springtdd.result.AccessTokenCarrier;
 import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,13 +22,16 @@ import static com.demo.book.springtdd.api.utils.RegisterProductCommandGenerator.
 import static com.demo.book.springtdd.api.utils.UsernameGenerator.generateUsername;
 import static java.util.Objects.requireNonNull;
 
-public record TestFixture(TestRestTemplate client) {
+public record TestFixture(
+        TestRestTemplate client,
+        ProductsRepository productsRepository
+) {
 
-    public static TestFixture create(Environment environment) {
+    public static TestFixture create(Environment environment, ProductsRepository productsRepository) {
         var client = new TestRestTemplate();
         var uriTemplateHandler = new LocalHostUriTemplateHandler(environment);
         client.setUriTemplateHandler(uriTemplateHandler);
-        return new TestFixture(client);
+        return new TestFixture(client, productsRepository);
     }
 
     public void createShopper(String email, String username, String password) {
@@ -124,12 +129,20 @@ public record TestFixture(TestRestTemplate client) {
         return UUID.fromString(id);
     }
 
-    public void createProduct(String productName) {
-
+    public List<UUID> registerProducts() {
+        return List.of(registerProduct(), registerProduct(), registerProduct());
     }
 
-    public List<UUID> registerProducts() {
+    public List<UUID> registerProducts(int count) {
+        List<UUID> productIds = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            productIds.add(registerProduct());
+            System.out.println("Registering product " +productIds.get(i));
+        }
+        return productIds;
+    }
 
-        return List.of(registerProduct(), registerProduct(), registerProduct());
+    public void deleteAllProducts() {
+        productsRepository.deleteAll();
     }
 }

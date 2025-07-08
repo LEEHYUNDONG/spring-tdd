@@ -1,6 +1,7 @@
 package com.demo.book.springtdd.utils;
 
 import com.demo.book.springtdd.command.RegisterProductCommand;
+import com.demo.book.springtdd.view.ProductView;
 import com.demo.book.springtdd.view.SellerProductView;
 import org.assertj.core.api.ThrowingConsumer;
 
@@ -24,4 +25,15 @@ public class ProductAssertions {
         return actual -> actual.compareTo(value) == 0;
     }
 
+    public static ThrowingConsumer<? super ProductView> isViewDerivedFrom(
+            RegisterProductCommand command
+    ) {
+        return product -> {
+            assertThat(product.name()).isEqualTo(command.name());
+            assertThat(product.imageUri()).isEqualTo(command.imageUri());
+            assertThat(product.description()).isEqualTo(command.description());
+            assertThat(product.priceAmount()).matches(equals(command.priceAmount()));
+            assertThat(product.stockQuantity()).isEqualTo(command.stockQunatity());
+        };
+    }
 }

@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue
     private Long dataKey;
 
     @Column(unique = true, name = "product_id")

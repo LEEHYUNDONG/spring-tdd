@@ -2,12 +2,18 @@ package com.demo.book.springtdd.testfixture;
 
 import com.demo.book.springtdd.command.CreateShopperCommand;
 import com.demo.book.springtdd.command.RegisterProductCommand;
+import com.demo.book.springtdd.domain.Product;
 import com.demo.book.springtdd.domain.ProductsRepository;
 import com.demo.book.springtdd.query.IssueShopperToken;
 import com.demo.book.springtdd.result.AccessTokenCarrier;
+import com.demo.book.springtdd.result.PageCarrier;
+import com.demo.book.springtdd.view.ProductView;
+import com.demo.book.springtdd.view.SellerMeView;
 import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,6 +27,7 @@ import static com.demo.book.springtdd.api.utils.PasswordGenerator.generatePasswo
 import static com.demo.book.springtdd.api.utils.RegisterProductCommandGenerator.generateRegisterProductCommand;
 import static com.demo.book.springtdd.api.utils.UsernameGenerator.generateUsername;
 import static java.util.Objects.requireNonNull;
+import static org.springframework.http.RequestEntity.get;
 
 public record TestFixture(
         TestRestTemplate client,
@@ -137,12 +144,24 @@ public record TestFixture(
         List<UUID> productIds = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             productIds.add(registerProduct());
-            System.out.println("Registering product " +productIds.get(i));
         }
         return productIds;
     }
 
     public void deleteAllProducts() {
         productsRepository.deleteAll();
+    }
+
+    public SellerMeView getSeller() {
+        return client.getForObject("/seller/me", SellerMeView.class);
+    }
+
+    public String consumeProductPage() {
+        ResponseEntity<PageCarrier<ProductView>> response = client.exchange(
+                get("/shopper/products").build(),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        return requireNonNull(response.getBody()).contunuationToken();
     }
 }

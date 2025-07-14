@@ -5,6 +5,9 @@ import com.demo.book.springtdd.result.PageCarrier;
 import com.demo.book.springtdd.testfixture.TestFixture;
 import com.demo.book.springtdd.utils.ApiTest;
 import com.demo.book.springtdd.view.ProductView;
+import com.demo.book.springtdd.view.SellerMeView;
+import com.demo.book.springtdd.view.SellerProductView;
+import com.demo.book.springtdd.view.SellerView;
 import org.assertj.core.api.ThrowingConsumer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,7 @@ import java.util.UUID;
 
 import static com.demo.book.springtdd.api.utils.RegisterProductCommandGenerator.generateRegisterProductCommand;
 import static com.demo.book.springtdd.utils.ProductAssertions.isViewDerivedFrom;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.http.RequestEntity.get;
 
@@ -138,6 +142,62 @@ public class GET_specs {
         ProductView actual = response.getBody().items()[0];
         assertThat(actual).satisfies(isViewDerivedFrom(command));
 
+    }
+
+    @Test
+    void 판매자_정보를_올바르게_반환한다(
+            @Autowired TestFixture fixture
+    ) {
+        //arrange
+        fixture.deleteAllProducts();
+
+        fixture.createSellerThenSetAsDefaultUser();
+        SellerMeView seller = fixture.getSeller();
+
+        fixture.registerProduct();
+        fixture.createShopperThenSetAsDefaultUser();
+
+        //act
+        ResponseEntity<PageCarrier<ProductView>> response = fixture.client().exchange(
+                get("/shopper/products").build(),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        //assert
+        PageCarrier<ProductView> body = response.getBody();
+        SellerView actual = requireNonNull(body).items()[0].seller();
+        assertThat(actual.id()).isEqualTo(seller.id());
+        assertThat(actual.username()).isEqualTo(seller.username());
+
+    }
+
+    @Test
+    void 두_번째_페이지를_올바르게_반환한다(
+            @Autowired TestFixture fixture
+    ) {
+        //arrange
+        fixture.deleteAllProducts();
+
+        fixture.createSellerThenSetAsDefaultUser();
+        fixture.registerProducts(PAGE_SIZE / 2);
+        List<UUID> ids = fixture.registerProducts(PAGE_SIZE);
+        fixture.registerProducts(PAGE_SIZE);
+
+        fixture.createShopperThenSetAsDefaultUser();
+        String token = fixture.consumeProductPage();
+
+        //act
+        ResponseEntity<PageCarrier<ProductView>> response = fixture.client().exchange(
+                get("/shopper/products?continuationToken=" + token).build(),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        //assert
+        assertThat(requireNonNull(response.getBody().items()))
+                .extracting(ProductView::id)
+                .containsExactlyElementsOf(ids.reversed());
     }
 
 

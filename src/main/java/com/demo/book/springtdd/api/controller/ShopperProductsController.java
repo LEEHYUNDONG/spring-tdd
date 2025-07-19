@@ -7,6 +7,7 @@ import com.demo.book.springtdd.view.ProductView;
 
 import jakarta.persistence.EntityManager;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,14 +52,15 @@ public record ShopperProductsController(
 
         Long next = null;
         if(!ObjectUtils.isEmpty(results)) {
-            next = results.getLast().product().getDataKey();
+            next = results.size() <= pageSize ? null :
+                    results.getLast().product().getDataKey();
         }
 
         return new PageCarrier<>(item, encodeCursor(next));
     }
 
     private Long decodeCursor(String continuationToken) {
-        if(continuationToken == null){
+        if(StringUtils.isEmpty(continuationToken)){
             return null;
         }
         byte[] data = Base64.getDecoder().decode(continuationToken);

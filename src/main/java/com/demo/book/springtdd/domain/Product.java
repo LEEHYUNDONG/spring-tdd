@@ -2,7 +2,6 @@ package com.demo.book.springtdd.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

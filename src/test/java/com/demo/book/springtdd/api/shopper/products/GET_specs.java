@@ -6,11 +6,11 @@ import com.demo.book.springtdd.testfixture.TestFixture;
 import com.demo.book.springtdd.utils.ApiTest;
 import com.demo.book.springtdd.view.ProductView;
 import com.demo.book.springtdd.view.SellerMeView;
-import com.demo.book.springtdd.view.SellerProductView;
 import com.demo.book.springtdd.view.SellerView;
-import org.assertj.core.api.ThrowingConsumer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
@@ -200,5 +200,66 @@ public class GET_specs {
                 .containsExactlyElementsOf(ids.reversed());
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {
+            1, PAGE_SIZE
+    })
+    void 마지막_페이지를_올바르게_반환한다(
+            int lastPageSize,
+            @Autowired TestFixture fixtures
+    ){
+        //arrange
+        fixtures.deleteAllProducts();
+
+        fixtures.createSellerThenSetAsDefaultUser();
+        List<UUID> ids = fixtures.registerProducts(lastPageSize);
+        fixtures.registerProducts(PAGE_SIZE * 2);
+        fixtures.createShopperThenSetAsDefaultUser();
+        String token = fixtures.consumeTwoProductPages();
+
+        //act
+        ResponseEntity<PageCarrier<ProductView>> response = fixtures.client().exchange(
+                get("/shopper/products?continuationToken=" + token).build(),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        //assert
+        PageCarrier<ProductView> actual = response.getBody();
+        assertThat(requireNonNull(actual).items())
+                .extracting(ProductView::id)
+                .containsExactlyElementsOf(ids.reversed());
+        assertThat(actual.contunuationToken()).isNull();
+
+    }
+
+    @Test
+    void continuationToken_매개변수에_빈_문자열이_지정되면_첫_번째_페이지를_반환한다(
+            @Autowired TestFixture fixture
+    ){
+        //arrange
+        fixture.deleteAllProducts();
+
+        fixture.createSellerThenSetAsDefaultUser();
+        fixture.registerProducts(PAGE_SIZE );
+        List<UUID> ids = fixture.registerProducts(PAGE_SIZE);
+
+        fixture.createShopperThenSetAsDefaultUser();
+
+        //act
+        ResponseEntity<PageCarrier<ProductView>> response = fixture.client().exchange(
+                get("/shopper/products?continuationToken=").build(),
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        //assert
+        PageCarrier<ProductView> actual = response.getBody();
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(requireNonNull(actual).items())
+                .hasSize(PAGE_SIZE)
+                .extracting(ProductView::id)
+                .containsAll(ids);
+    }
 
 }

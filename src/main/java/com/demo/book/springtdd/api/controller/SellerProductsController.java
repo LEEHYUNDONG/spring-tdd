@@ -1,6 +1,7 @@
 package com.demo.book.springtdd.api.controller;
 
 import com.demo.book.springtdd.command.RegisterProductCommand;
+import com.demo.book.springtdd.commandmodel.InvalidCommandException;
 import com.demo.book.springtdd.domain.Product;
 import com.demo.book.springtdd.domain.ProductsRepository;
 import com.demo.book.springtdd.domain.Seller;
@@ -20,19 +21,14 @@ import java.util.UUID;
 import static java.time.ZoneOffset.UTC;
 
 @RestController
-public record SellerProductController(SellerRepository sellerRepository, ProductsRepository productsRepository) {
+public record SellerProductsController(SellerRepository sellerRepository, ProductsRepository productsRepository) {
 
     @PostMapping("/seller/products")
     ResponseEntity<?> addProduct(@RequestBody RegisterProductCommand command, Principal principal) {
         UUID sellerId = UUID.fromString(principal.getName());
         Optional<Seller> seller = sellerRepository.findById(sellerId);
-
-        if(seller.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
         if(isValidUri(command.imageUri()) == false) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .build();
+            throw new InvalidCommandException();
         }
         UUID id = UUID.randomUUID();
         var product = new Product();

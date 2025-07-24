@@ -2,7 +2,10 @@ package com.demo.book.springtdd.api.controller;
 
 import com.demo.book.springtdd.domain.Product;
 import com.demo.book.springtdd.domain.ProductsRepository;
-import com.demo.book.springtdd.domain.Seller;
+import com.demo.book.springtdd.query.FindSellerProduct;
+import com.demo.book.springtdd.query.GetSellerProducts;
+import com.demo.book.springtdd.querymodel.FindSellerProoductQueryProcessor;
+import com.demo.book.springtdd.querymodel.GetSellerProductsQueryProcessor;
 import com.demo.book.springtdd.view.ArrayCarrier;
 import com.demo.book.springtdd.view.SellerProductView;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
-import java.util.Comparator;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 @RestController
 public record SellerProductViewController(
@@ -22,38 +25,16 @@ public record SellerProductViewController(
 
     @GetMapping("/seller/products/{id}")
     public ResponseEntity<?> viewProducts(@PathVariable UUID id, Principal user) {
-        UUID sellerId = UUID.fromString(user.getName());
-        return productsRepository.findById(id)
-                .filter(product -> product.getSellerId().equals(sellerId))
-                .map(SellerProductViewController::convertToView)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        var processor = new FindSellerProoductQueryProcessor(productsRepository::findById);
+        var query = new FindSellerProduct(UUID.fromString(user.getName()), id);
+
+        return ResponseEntity.of(processor.process(query));
     }
 
     @GetMapping("/seller/products")
-    ResponseEntity<?> getProducts(Principal user) {
-        UUID sellerId = UUID.fromString(user.getName()); // Replace with actual seller ID retrieval logic
-
-        SellerProductView[] items = productsRepository
-                .findBySellerId(sellerId)
-                .stream()
-                .map(SellerProductViewController::convertToView)
-                .sorted(Comparator.comparing(SellerProductView::registeredAt).reversed())
-                .toArray(SellerProductView[]::new);
-
-        return ResponseEntity.ok(new ArrayCarrier<SellerProductView>(items));
+    ArrayCarrier<SellerProductView> getProducts(Principal user) {
+        var processor = new GetSellerProductsQueryProcessor(productsRepository::findBySellerId);
+        var query = new GetSellerProducts(UUID.fromString(user.getName()));
+        return processor.process(query);
     }
-
-    private static SellerProductView convertToView(Product product) {
-        return new SellerProductView(
-                product.getId(),
-                product.getName(),
-                product.getImageUri(),
-                product.getDescription(),
-                product.getPriceAmount(),
-                product.getStockQuantity(),
-                product.getRegisteredAt()
-        );
-    }
-
 }

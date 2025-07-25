@@ -6,7 +6,10 @@ public class TestDatasource {
         return new String[]{
                 "",
                 "pass",
-                "pass123"
+                "pass123",
+                "12345678pass",
+                "12345678",
+                "123password45678",
         };
     };
 }

@@ -43,8 +43,18 @@ public record TestFixture(
 
     public void createShopper(String email, String username, String password) {
         var command = new CreateShopperCommand(email, username, password);
-        client.postForEntity("/shopper/signUp",
-                command, Void.class);
+        ensureSuccessful(
+                client.postForEntity("/shopper/signUp",
+                        command, Void.class),
+                command);
+    }
+
+    private void ensureSuccessful(ResponseEntity<Void> response,
+                                  Object request) {
+        if (response.getStatusCode().is2xxSuccessful() == false) {
+            String message = "Request with " + request + " failed with status code " + response.getStatusCode();
+            throw new RuntimeException(message);
+        }
     }
 
     public String issueShopperToken(String email, String password) {
@@ -65,7 +75,6 @@ public record TestFixture(
     }
 
 
-
     private void setSellerDefaultAuthorization(String email, String password) {
         String token = issueSellerToken(email, password);
         setDefualtAuthorization(token);
@@ -80,7 +89,7 @@ public record TestFixture(
         RestTemplate template = client.getRestTemplate();
         // interceptor를 추가하여 요청에 Authorization 헤더를 추가
         template.getInterceptors().addFirst((request, body, execution) -> {
-            if(request.getHeaders().containsKey("Authorization") == false) {
+            if (request.getHeaders().containsKey("Authorization") == false) {
                 request.getHeaders().add("Authorization", "Bearer " + token);
             }
             return execution.execute(request, body);
@@ -97,7 +106,10 @@ public record TestFixture(
 
     private void createSeller(String email, String password) {
         var command = new CreateShopperCommand(email, generateUsername(), password);
-        client.postForEntity("/seller/signUp", command, Void.class);
+        // Ensure the command is successful
+        ensureSuccessful(
+                client.postForEntity("/seller/signUp", command, Void.class),
+                command);
     }
 
     public void createSellerThenSetAsDefaultUser() {

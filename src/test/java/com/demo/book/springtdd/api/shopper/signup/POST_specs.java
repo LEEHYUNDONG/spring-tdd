@@ -170,18 +170,18 @@ public class POST_specs {
         assertThat(response.getStatusCode().value()).isEqualTo(204);
     }
 
-    @Test
-    void password_속성이_올바른형식을_따르지_않으면_400_Bad_Request_상태를_반환한다(@Autowired TestRestTemplate client) {
+    @ParameterizedTest
+    @MethodSource("com.demo.book.springtdd.api.utils.TestDatasource#invalidPasswords")
+    void password_속성이_올바른형식을_따르지_않으면_400_Bad_Request_상태를_반환한다(String invalidPassword, @Autowired TestRestTemplate client) {
         // arrange
         String email = generateEmail();
-        String password = null;
 
 
         // act
         ResponseEntity<Void> response = client.postForEntity("/shopper/signUp", new CreateShopperCommand(
                 email,
                 generateUsername(),
-                password
+                invalidPassword
         ), Void.class);
 
         // assert

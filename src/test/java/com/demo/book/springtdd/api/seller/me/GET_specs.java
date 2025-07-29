@@ -32,7 +32,8 @@ public class GET_specs {
         var seller = new CreateSellerCommand(
                 email,
                 username,
-                password
+                password,
+                generateEmail()
         );
         client.postForEntity("/seller/signUp"
                 , seller, Void.class);
@@ -62,7 +63,8 @@ public class GET_specs {
         var seller = new CreateSellerCommand(
                 generateEmail(),
                 generateUsername(),
-                generatePassword()
+                generatePassword(),
+                generateEmail()
         );
         client.postForEntity("/seller/signUp"
                 , seller, Void.class);
@@ -79,14 +81,16 @@ public class GET_specs {
         var seller1 = new CreateSellerCommand(
                 generateEmail(),
                 generateUsername(),
-                generatePassword()
+                generatePassword(),
+                generateEmail()
         );
         client.postForEntity("/seller/signUp", seller1, Void.class);
 
         var seller2 = new CreateSellerCommand(
                 generateEmail(),
                 generateUsername(),
-                generatePassword()
+                generatePassword(),
+                generateEmail()
         );
         client.postForEntity("/seller/signUp", seller2, Void.class);
 
@@ -120,7 +124,8 @@ public class GET_specs {
         var seller = new CreateSellerCommand(
                 generateEmail(),
                 generateUsername(),
-                generatePassword()
+                generatePassword(),
+                generateEmail()
         );
 
         client.postForEntity("/seller/signUp", seller, Void.class);
@@ -156,7 +161,9 @@ public class GET_specs {
         var seller = new CreateSellerCommand(
                 generateEmail(),
                 generateUsername(),
-                generatePassword()
+                generatePassword(),
+                generateEmail()
+
         );
 
 

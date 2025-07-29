@@ -10,7 +10,11 @@ public record ProductSellerTuple(Product product, Seller seller) {
     public static ProductView toView(ProductSellerTuple tuple) {
         return new ProductView(
                 tuple.product().getId(),
-                new SellerView(tuple.seller().getId(), tuple.seller().getUsername()),
+                new SellerView(
+                        tuple.seller().getId(),
+                        tuple.seller().getUsername(),
+                        null
+                ),
                 tuple.product().getName(),
                 tuple.product().getImageUri(),
                 tuple.product().getDescription(),

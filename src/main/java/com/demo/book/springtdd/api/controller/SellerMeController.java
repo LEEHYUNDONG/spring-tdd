@@ -21,7 +21,8 @@ public record SellerMeController(SellerRepository sellerRepository) {
                 .map(seller -> new SellerMeView(
                         seller.getId(),
                         seller.getEmail(),
-                        seller.getUsername()
+                        seller.getUsername(),
+                        null
                 ))
                 .orElseThrow();
     }

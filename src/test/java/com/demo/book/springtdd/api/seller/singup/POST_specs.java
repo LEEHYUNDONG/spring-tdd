@@ -3,10 +3,12 @@ package com.demo.book.springtdd.api.seller.singup;
 import com.demo.book.springtdd.command.CreateSellerCommand;
 import com.demo.book.springtdd.domain.Seller;
 import com.demo.book.springtdd.domain.SellerRepository;
+import com.demo.book.springtdd.testfixture.TestFixture;
 import com.demo.book.springtdd.utils.ApiTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.demo.book.springtdd.api.utils.EmailGenerator.generateEmail;
 import static com.demo.book.springtdd.api.utils.PasswordGenerator.generatePassword;
+import static com.demo.book.springtdd.api.utils.TestDatasource.invalidEmail;
 import static com.demo.book.springtdd.api.utils.UsernameGenerator.generateUsername;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -51,13 +54,7 @@ public class POST_specs {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "invalid-email",
-            "invalid-email@",
-            "invalid-email@test.",
-            "invalid-email@test",
-            "invalid-email@.com"
-    })
+    @MethodSource("com.demo.book.springtdd.api.utils.TestDatasource#invalidEmail")
     void email_속성이_올바른_형식을_따르지_않으면_400_Bad_Request_상태를_반환한다(String email, @Autowired TestRestTemplate client) {
         //arrange
         var command = new CreateSellerCommand(email, generateUsername(), "password", generateEmail());
@@ -193,6 +190,24 @@ public class POST_specs {
 
         assertThat(actual).isNotNull();
         assertThat(passwordEncoder.matches(command.password(), actual)).isTrue();
+    }
+
+    @ParameterizedTest
+    @MethodSource("com.demo.book.springtdd.api.utils.TestDatasource#invalidEmail")
+    void contactEmail_속성이_올바르게_지정되지_않으면_400_Bad_Reqeust_상태코드를_반환한다(
+            String contactEmail,
+            @Autowired TestFixture fixture
+            ) {
+        //arrange
+        var command = new CreateSellerCommand(generateEmail(), generateUsername(), generatePassword(), contactEmail);
+
+        //act
+        ResponseEntity<Void> response = fixture.client().postForEntity(
+                "/seller/signUp", command, Void.class
+        );
+
+        //assert
+        assertThat(response.getStatusCode().value()).isEqualTo(400);
     }
 
 }

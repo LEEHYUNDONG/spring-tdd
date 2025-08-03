@@ -1,9 +1,12 @@
 package com.demo.book.springtdd.api.seller.products;
 
 import com.demo.book.springtdd.command.RegisterProductCommand;
+import com.demo.book.springtdd.result.PageCarrier;
 import com.demo.book.springtdd.testfixture.TestFixture;
 import com.demo.book.springtdd.utils.ApiTest;
 import com.demo.book.springtdd.view.ArrayCarrier;
+import com.demo.book.springtdd.view.ProductView;
+import com.demo.book.springtdd.view.SellerMeView;
 import com.demo.book.springtdd.view.SellerProductView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -166,6 +169,33 @@ public class GET_specs {
         assertThat(response.getBody().items())
                 .extracting(SellerProductView::registeredAt)
                 .isSortedAccordingTo(Comparator.reverseOrder()); // 역순 정렬 확인
+
+    }
+
+    @Test
+    void 문의_이메일_주소를_올바르게_설정한다(
+            @Autowired TestFixture fixture
+    ) {
+        // arrange
+        fixture.deleteAllProducts();
+
+        fixture.createSellerThenSetAsDefaultUser();
+        SellerMeView seller = fixture.getSeller();
+        fixture.registerProduct();
+
+        fixture.createShopperThenSetAsDefaultUser();
+
+        //act
+        ResponseEntity<PageCarrier<ProductView>> response =
+                fixture.client().exchange(
+                        get("/shopper/products").build(),
+                        new ParameterizedTypeReference<>() {
+                        }
+                );
+        //assert
+        ProductView actual = requireNonNull(response.getBody()).items()[0];
+        assertThat(actual.seller().contactEmail())
+                .isEqualTo(seller.contactEmail());
 
     }
 

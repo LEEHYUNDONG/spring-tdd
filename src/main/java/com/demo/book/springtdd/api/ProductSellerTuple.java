@@ -13,7 +13,7 @@ public record ProductSellerTuple(Product product, Seller seller) {
                 new SellerView(
                         tuple.seller().getId(),
                         tuple.seller().getUsername(),
-                        null
+                        tuple.seller().getContactEmail()
                 ),
                 tuple.product().getName(),
                 tuple.product().getImageUri(),

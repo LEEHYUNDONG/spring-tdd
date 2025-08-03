@@ -1,5 +1,6 @@
 package com.demo.book.springtdd.testfixture;
 
+import com.demo.book.springtdd.command.CreateSellerCommand;
 import com.demo.book.springtdd.command.CreateShopperCommand;
 import com.demo.book.springtdd.command.RegisterProductCommand;
 import com.demo.book.springtdd.domain.Product;
@@ -104,8 +105,8 @@ public record TestFixture(
         return requireNonNull(carrier).accessToken();
     }
 
-    private void createSeller(String email, String password) {
-        var command = new CreateShopperCommand(email, generateUsername(), password);
+    public void createSeller(String email, String username, String password, String contactEmail) {
+        var command = new CreateSellerCommand(email, username, password, contactEmail);
         // Ensure the command is successful
         ensureSuccessful(
                 client.postForEntity("/seller/signUp", command, Void.class),
@@ -115,7 +116,8 @@ public record TestFixture(
     public void createSellerThenSetAsDefaultUser() {
         String email = generateEmail();
         String password = generatePassword();
-        createSeller(email, password);
+        String contactEmail = generateEmail();
+        createSeller(email, generateUsername(), password, contactEmail);
         setSellerDefaultAuthorization(email, password);
     }
 

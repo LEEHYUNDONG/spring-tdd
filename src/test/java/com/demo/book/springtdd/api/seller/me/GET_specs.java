@@ -3,6 +3,7 @@ package com.demo.book.springtdd.api.seller.me;
 import com.demo.book.springtdd.command.CreateSellerCommand;
 import com.demo.book.springtdd.query.IssueSellerToken;
 import com.demo.book.springtdd.result.AccessTokenCarrier;
+import com.demo.book.springtdd.testfixture.TestFixture;
 import com.demo.book.springtdd.utils.ApiTest;
 import com.demo.book.springtdd.view.SellerMeView;
 import org.junit.jupiter.api.DisplayName;
@@ -184,4 +185,39 @@ public class GET_specs {
         assertThat(response.getBody().email()).isEqualTo(seller.email());
         assertThat(response.getBody().username()).isEqualTo(seller.username());
     }
+
+    @Test
+    void 문의_이메일_주소를_올바르게_설정한다(
+            @Autowired TestFixture fixture
+    ) {
+        String email = generateEmail();
+        String username = generateUsername();
+        String password = generatePassword();
+        String contactEmail = generateEmail();
+
+        fixture.createSeller(
+                email, username, password, contactEmail
+        );
+
+        AccessTokenCarrier carrier = fixture.client().postForObject(
+                "/seller/issueToken",
+                new IssueSellerToken(email, password),
+                AccessTokenCarrier.class
+        );
+        String token = carrier.accessToken();
+
+        //act
+        ResponseEntity<SellerMeView> response = fixture.client().exchange(
+                get("/seller/me")
+                        .header("Authorization", "Bearer " + token)
+                        .build(),
+                SellerMeView.class
+        );
+
+
+        //assert
+        SellerMeView actual = requireNonNull(response.getBody());
+        assertThat(actual.contactEmail()).isEqualTo(contactEmail);
+    }
+
 }

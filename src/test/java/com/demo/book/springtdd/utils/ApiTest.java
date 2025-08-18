@@ -10,7 +10,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @SpringBootTest(
-        classes = {SpringTddBookApplication.class, TestFixtureConfiguration.class},
+        classes = {SpringTddBookApplication.class,
+                TestFixtureConfiguration.class,
+                PasswordEncoderConfiguration.class
+        },
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @Target(ElementType.TYPE)

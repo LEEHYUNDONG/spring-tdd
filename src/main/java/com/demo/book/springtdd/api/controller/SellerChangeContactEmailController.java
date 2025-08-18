@@ -28,7 +28,7 @@ public record SellerChangeContactEmailController(
         }
         UUID id = UUID.fromString(user.getName());
         Seller seller = sellerRepository.findById(id).orElseThrow();
-        seller.changeContactEmail(command.contactEmail());
+        seller.setContactEmail(command.contactEmail());
         sellerRepository.save(seller);
         return ResponseEntity.noContent().build();
     }

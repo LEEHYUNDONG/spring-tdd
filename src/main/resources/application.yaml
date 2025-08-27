@@ -1,3 +1,5 @@
 security:
   jwt:
     secret: c2f3e8b4-9d4b-4a6e-8f3e-2d7c9a1b5e6f
+    expiration-hours: 24
+    issuer: spring-tdd-book

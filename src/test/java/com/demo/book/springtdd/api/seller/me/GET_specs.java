@@ -220,4 +220,80 @@ public class GET_specs {
         assertThat(actual.contactEmail()).isEqualTo(contactEmail);
     }
 
+    @Test
+    void 만료된_토큰으로_요청하면_401_Unauthorized_상태코드를_반환한다(@Autowired TestFixture fixture) {
+        // arrange
+        String email = generateEmail();
+        String password = generatePassword();
+        fixture.createSeller(email, generateUsername(), password, generateEmail());
+        
+        // 만료된 토큰 생성
+        String expiredToken = fixture.createExpiredToken(email, password, "seller");
+
+        // act
+        ResponseEntity<Void> response = fixture.client().exchange(
+                get("/seller/me")
+                        .header("Authorization", "Bearer " + expiredToken)
+                        .build(),
+                Void.class);
+
+        // assert
+        assertThat(response.getStatusCode().value()).isEqualTo(401);
+    }
+
+    @Test
+    void 잘못된_서명의_토큰으로_요청하면_401_Unauthorized_상태코드를_반환한다(@Autowired TestFixture fixture) {
+        // arrange
+        String invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
+        // act
+        ResponseEntity<Void> response = fixture.client().exchange(
+                get("/seller/me")
+                        .header("Authorization", "Bearer " + invalidToken)
+                        .build(),
+                Void.class);
+
+        // assert
+        assertThat(response.getStatusCode().value()).isEqualTo(401);
+    }
+
+    @Test
+    void 토큰의_스코프가_올바르게_설정된다(@Autowired TestFixture fixture) {
+        // arrange
+        String email = generateEmail();
+        String password = generatePassword();
+        fixture.createSeller(email, generateUsername(), password, generateEmail());
+        String token = fixture.issueSellerToken(email, password);
+
+        // act & assert
+        String scope = fixture.getTokenScope(token);
+        assertThat(scope).isEqualTo("seller");
+    }
+
+    @Test
+    void 토큰의_이메일이_올바르게_설정된다(@Autowired TestFixture fixture) {
+        // arrange
+        String email = generateEmail();
+        String password = generatePassword();
+        fixture.createSeller(email, generateUsername(), password, generateEmail());
+        String token = fixture.issueSellerToken(email, password);
+
+        // act & assert
+        String tokenEmail = fixture.getTokenEmail(token);
+        assertThat(tokenEmail).isEqualTo(email);
+    }
+
+    @Test
+    void 토큰의_발행자가_올바르게_설정된다(@Autowired TestFixture fixture) {
+        // arrange
+        String email = generateEmail();
+        String password = generatePassword();
+        fixture.createSeller(email, generateUsername(), password, generateEmail());
+        String token = fixture.issueSellerToken(email, password);
+
+        // act & assert
+        String issuer = fixture.getTokenIssuer(token);
+        assertThat(issuer).isEqualTo("spring-tdd-book");
+    }
+
 }

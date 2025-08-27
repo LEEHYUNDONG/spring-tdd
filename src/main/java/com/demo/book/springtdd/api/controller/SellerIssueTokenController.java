@@ -12,6 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.UUID;
 
 @RestController
 public record SellerIssueTokenController(
@@ -26,18 +31,28 @@ public record SellerIssueTokenController(
                 .filter(seller -> passwordEncoder.matches(
                         issueSellerToken.password(),
                         seller.getHashedPassword()))
-                .map(seller -> composeToken(seller))
+                .map(this::composeToken)
                 .map(AccessTokenCarrier::new)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     private String composeToken(Seller seller) {
+        Instant now = Instant.now();
+        Instant expiration = now.plus(jwtKeyHolder.expirationHours(), ChronoUnit.HOURS);
+        
         return Jwts
                 .builder()
-                .setSubject(seller.getId().toString())
-                .claim("scp", "seller")
-                .signWith(jwtKeyHolder.secretKey())
+                .setHeaderParam("alg", "HS256")
+                .setHeaderParam("typ", "JWT")
+                .setId(UUID.randomUUID().toString()) // jti (JWT ID)
+                .setIssuer(jwtKeyHolder.issuer()) // iss (Issuer)
+                .setSubject(seller.getId().toString()) // sub (Subject)
+                .setIssuedAt(Date.from(now)) // iat (Issued At)
+                .setExpiration(Date.from(expiration)) // exp (Expiration Time)
+                .claim("scp", "seller") // scope
+                .claim("email", seller.getEmail()) // 사용자 이메일 추가
+                .signWith(jwtKeyHolder.secretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 }

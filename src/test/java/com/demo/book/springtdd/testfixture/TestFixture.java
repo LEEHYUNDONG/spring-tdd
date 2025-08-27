@@ -6,10 +6,13 @@ import com.demo.book.springtdd.command.RegisterProductCommand;
 import com.demo.book.springtdd.domain.Product;
 import com.demo.book.springtdd.domain.ProductsRepository;
 import com.demo.book.springtdd.query.IssueShopperToken;
+import com.demo.book.springtdd.query.IssueSellerToken;
 import com.demo.book.springtdd.result.AccessTokenCarrier;
 import com.demo.book.springtdd.result.PageCarrier;
 import com.demo.book.springtdd.view.ProductView;
 import com.demo.book.springtdd.view.SellerMeView;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,8 +21,12 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.net.URI;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,6 +73,13 @@ public record TestFixture(
         return carrier.accessToken();
     }
 
+    public String issueSellerToken(String email, String password) {
+        AccessTokenCarrier carrier = client.postForObject(
+                "/seller/issueToken",
+                new IssueSellerToken(email, password),
+                AccessTokenCarrier.class);
+        return requireNonNull(carrier).accessToken();
+    }
 
     public static String createShopperThenIssueToken(
             TestFixture fixture) {
@@ -75,6 +89,14 @@ public record TestFixture(
         return fixture.issueShopperToken(email, password);
     }
 
+    public static String createSellerThenIssueToken(
+            TestFixture fixture) {
+        String email = generateEmail();
+        String password = generatePassword();
+        String contactEmail = generateEmail();
+        fixture.createSeller(email, generateUsername(), password, contactEmail);
+        return fixture.issueSellerToken(email, password);
+    }
 
     private void setSellerDefaultAuthorization(String email, String password) {
         String token = issueSellerToken(email, password);
@@ -95,14 +117,6 @@ public record TestFixture(
             }
             return execution.execute(request, body);
         });
-    }
-
-    private String issueSellerToken(String email, String password) {
-        AccessTokenCarrier carrier = client.postForObject(
-                "/seller/issueToken",
-                new IssueShopperToken(email, password),
-                AccessTokenCarrier.class);
-        return requireNonNull(carrier).accessToken();
     }
 
     public void createSeller(String email, String username, String password, String contactEmail) {
@@ -126,6 +140,81 @@ public record TestFixture(
         String password = generatePassword();
         createShopper(email, generateUsername(), password);
         setShopperDefaultAuthorization(email, password);
+    }
+
+    // JWT 토큰 검증 메서드들
+    public Claims parseTokenClaims(String token) {
+        String secret = "c2f3e8b4-9d4b-4a6e-8f3e-2d7c9a1b5e6f";
+        return Jwts.parserBuilder()
+                .setSigningKey(new SecretKeySpec(secret.getBytes(), "HmacSHA256"))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            Claims claims = parseTokenClaims(token);
+            return claims.getExpiration().before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    public String getTokenSubject(String token) {
+        Claims claims = parseTokenClaims(token);
+        return claims.getSubject();
+    }
+
+    public String getTokenScope(String token) {
+        Claims claims = parseTokenClaims(token);
+        return claims.get("scp", String.class);
+    }
+
+    public String getTokenEmail(String token) {
+        Claims claims = parseTokenClaims(token);
+        return claims.get("email", String.class);
+    }
+
+    public String getTokenIssuer(String token) {
+        Claims claims = parseTokenClaims(token);
+        return claims.getIssuer();
+    }
+
+    public Date getTokenExpiration(String token) {
+        Claims claims = parseTokenClaims(token);
+        return claims.getExpiration();
+    }
+
+    public Date getTokenIssuedAt(String token) {
+        Claims claims = parseTokenClaims(token);
+        return claims.getIssuedAt();
+    }
+
+    public String getTokenJti(String token) {
+        Claims claims = parseTokenClaims(token);
+        return claims.getId();
+    }
+
+    // 만료된 토큰 생성 (테스트용)
+    public String createExpiredToken(String email, String password, String userType) {
+        String secret = "c2f3e8b4-9d4b-4a6e-8f3e-2d7c9a1b5e6f";
+        Instant now = Instant.now();
+        Instant expiration = now.minus(1, ChronoUnit.HOURS); // 1시간 전에 만료
+        
+        return Jwts
+                .builder()
+                .setHeaderParam("alg", "HS256")
+                .setHeaderParam("typ", "JWT")
+                .setId(UUID.randomUUID().toString())
+                .setIssuer("spring-tdd-book")
+                .setSubject("test-user-id")
+                .setIssuedAt(Date.from(now.minus(2, ChronoUnit.HOURS)))
+                .setExpiration(Date.from(expiration))
+                .claim("scp", userType)
+                .claim("email", email)
+                .signWith(new SecretKeySpec(secret.getBytes(), "HmacSHA256"))
+                .compact();
     }
 
     public String createProductForSellerAndGetLocation() {

@@ -1,5 +1,17 @@
 # TDD
 
+## 목표
+- [x] 켄트백/Test Driven Develop 독서
+- [x] TDD 관련 강의
+- [ ] UseCase 개발
+- [ ] 클린 아키텍처 및 리팩토링
+- [ ] 단위 테스트 작성
+- [ ] 코틀린으로 전환
+
+## Tdd를 진행하며..
+TDD는 꼭 필요한 로직이나 비즈니스가 아니라면 Trade-off가 많기 때문에 지양하는게 좋다고 생각한다.
+
+
 ## 응용프로그램 빌드
 
 ```bash
@@ -261,8 +273,8 @@ Location: /seller/products/{productId}
 테스트
 - [x] 올바르게 요청하면 201 Created 상태코드를 반환한다
 - [x] 판매자가 아닌 사용자가 요청하면 403 Forbidden 상태코드를 반환한다
-- [ ] imageUri 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
-- [ ] 올바르게 요청하면 등록된 상품 정보에 접근하는 Location 헤더를 반환한다
+- [x] imageUri 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
+- [x] 올바르게 요청하면 등록된 상품 정보에 접근하는 Location 헤더를 반환한다
 
 
 ### 판매자 상품 조회

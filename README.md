@@ -1,435 +1,375 @@
-# TDD
+# Spring TDD 이커머스 프로젝트
+
+TDD 방법론과 헥사고날 아키텍처를 적용한 이커머스 마켓플레이스 애플리케이션입니다.
+
+## 프로젝트 개요
+
+판매자(Seller)와 구매자(Shopper)를 위한 이커머스 플랫폼으로, JWT 인증 기반의 사용자 관리와 상품 등록/조회 기능을 제공합니다.
+
+### 기술 스택
+
+- **언어**: Java 21
+- **프레임워크**: Spring Boot 3.5.0
+- **인증**: JWT (Spring Security OAuth2 Resource Server)
+- **데이터베이스**: H2 (In-memory)
+- **ORM**: JPA / Hibernate
+- **빌드 도구**: Gradle
+- **테스트**: JUnit 5, Spring Boot Test
 
 ## 목표
-- [x] 켄트백/Test Driven Develop 독서
-- [x] TDD 관련 강의
-- [ ] UseCase 개발
-- [ ] 클린 아키텍처 및 리팩토링
-- [ ] 단위 테스트 작성
+
+- [x] 켄트백/Test Driven Development 독서
+- [x] TDD 관련 강의 수강
+- [x] TDD 기반 API 개발
+- [x] 통합 테스트 작성 (100% 커버리지)
+- [x] 헥사고날 아키텍처 설계
+- [ ] 클린 아키텍처 리팩토링 (진행 중 - 30%)
+- [ ] UseCase 전면 적용
+- [ ] 단위 테스트 추가 작성
+- [ ] 불필요한 의존성 제거
 - [ ] 코틀린으로 전환
 
-## Tdd를 진행하며..
-TDD는 꼭 필요한 로직이나 비즈니스가 아니라면 Trade-off가 많기 때문에 지양하는게 좋다고 생각한다.
+## 아키텍처
 
+### 헥사고날 아키텍처 (Ports and Adapters)
 
-## 응용프로그램 빌드
+이 프로젝트는 클린 아키텍처의 헥사고날 아키텍처 패턴을 따릅니다:
 
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Adapter (In)                         │
+│              Controllers (REST API)                     │
+└───────────────────────┬─────────────────────────────────┘
+                        │ depends on
+                        ↓
+┌─────────────────────────────────────────────────────────┐
+│                 Application (Core)                      │
+│  ┌──────────────────┐      ┌──────────────────┐         │
+│  │  Inbound Ports   │      │   Use Cases      │         │
+│  │  (Interfaces)    │←─────│  (Business Logic)│         │
+│  └──────────────────┘      └──────────────────┘         │
+│                                    │                    │
+│                                    ↓ depends on         │
+│  ┌──────────────────┐      ┌──────────────────┐         │
+│  │ Outbound Ports   │      │     Domain       │         │
+│  │  (Interfaces)    │      │   (Entities)     │         │
+│  └──────────────────┘      └──────────────────┘         │
+└───────────────────────┬─────────────────────────────────┘
+                        │ implements
+                        ↓
+┌─────────────────────────────────────────────────────────┐
+│                   Adapter (Out)                         │
+│        Persistence (JPA Repositories)                   │
+└─────────────────────────────────────────────────────────┘
+```
+
+**핵심 원칙:**
+- 의존성은 항상 안쪽(도메인)을 향함
+- 도메인은 외부 기술에 의존하지 않음
+- 인터페이스(Port)를 통한 느슨한 결합
+
+### CQRS 패턴 적용
+
+Command(쓰기)와 Query(읽기) 작업을 명확히 분리:
+- **Command**: `domain/model/command/` - 상태 변경 로직
+- **Query**: `domain/model/query/` - 데이터 조회 로직
+
+## 리팩토링 진행 상황
+
+### Controller 헥사고날 아키텍처 전환
+
+| Controller | 상태 | Port 사용 | Repository 직접 의존 제거 | 비고 |
+|-----------|------|----------|------------------------|------|
+| SellerIssueTokenController | ✅ 완료 | ForIssuingSellerToken | ✅ | class 전환 |
+| ShopperIssueTokenController | ✅ 완료 | ForIssuingShopperToken | ✅ | class 전환 |
+| SellerSignUpController | ✅ 완료 | ForCreatingSeller | ✅ | 불필요한 import 정리 필요 |
+| ShopperSignUpController | 🔄 대기 | - | ❌ | record → class 전환 필요 |
+| SellerMeController | 🔄 대기 | - | ❌ | UseCase 생성 필요 |
+| ShopperMeViewController | 🔄 대기 | - | ❌ | UseCase 생성 필요 |
+| SellerChangeContactEmailController | 🔄 대기 | - | ❌ | Command UseCase 필요 |
+| SellerProductsController | 🔄 대기 | - | ❌ | Command UseCase 필요 |
+| SellerProductViewController | 🔄 대기 | - | ❌ | Query UseCase 필요 |
+| ShopperProductsController | 🔄 대기 | - | ❌ | Query UseCase 필요 |
+
+**진행률**: 3/10 (30%)
+
+### UseCase 구현 현황
+
+| UseCase | 상태 | Inbound Port | Outbound Port | 비고 |
+|---------|------|--------------|---------------|------|
+| SellerSignUpUsecase | ✅ | ForCreatingSeller | CreateSellerPort | HTTP 의존성 제거 필요 |
+| SellerIssueTokenUsecase | ✅ | ForIssuingSellerToken | ReadSellerPort | - |
+| ShopperIssueTokenUsecase | ✅ | ForIssuingShopperToken | ReadShopperPort | - |
+| ShopperSignUpUsecase | 🔄 | - | - | 생성 필요 |
+| SellerMeUsecase | 🔄 | - | - | 생성 필요 |
+| ShopperMeUsecase | 🔄 | - | - | 생성 필요 |
+| ChangeContactEmailUsecase | 🔄 | - | - | 생성 필요 |
+| RegisterProductUsecase | 🔄 | - | - | Executor → UseCase 전환 |
+| GetSellerProductsUsecase | 🔄 | - | - | Processor → UseCase 전환 |
+| GetProductPageUsecase | 🔄 | - | - | Processor → UseCase 전환 |
+
+**진행률**: 3/10 (30%) 
+
+## TDD에 대한 생각
+
+TDD는 꼭 필요한 로직이나 비즈니스 요구사항이 명확한 경우에 큰 효과를 발휘합니다. 모든 코드에 TDD를 적용하는 것은 개발 속도와 유연성 측면에서 Trade-off가 있으므로, 프로젝트 상황에 맞게 선택적으로 적용하는 것이 좋습니다.
+
+## 빌드 및 실행
+
+### 애플리케이션 빌드
 ```bash
 ./gradlew build
 ```
 
-## 응용프로그램 실행
-
+### 애플리케이션 실행
 ```bash
 ./gradlew bootRun
 ```
 
-
-## API 목록
-
-### 판매자 회원가입
-
-요청
-- 메서드: POST
-- 경로: /seller/signUp
-- 헤더
-```
-Content-Type: application/json
-```
-- 본문
-```
-CreateSellerCommand{
-  email: string,
-  user: string,
-  password: string
-}
-```
-
+### 테스트 실행
 ```bash
-curl -d '{ "email":"seller1@example.com", "username":"seller1", "password":"seller1password" }' \
+./gradlew test                                              # 모든 테스트 실행
+./gradlew test --tests "ClassName"                         # 특정 테스트 클래스 실행
+./gradlew test --tests "ClassName.methodName"              # 특정 테스트 메서드 실행
+```
+
+## API 명세
+
+### 인증 관련
+
+#### 판매자 회원가입
+```bash
+curl -d '{"email":"seller1@example.com", "username":"seller1", "password":"seller1password", "contactEmail":"contact@example.com"}' \
 -H "Content-Type: application/json" \
--i -X POST http://localhost:8080/seller/signUp
+-X POST http://localhost:8080/seller/signUp
 ```
 
-성공 응답
-- 상태코드: 204 No Content
+**응답**: `204 No Content`
 
-정책
-- 이메일 주소는 유일해야한다
-- 사용자이름은 유일해야한다
-- 사용자 이릉은 3자 이상의 영문자, 숫자, 하이픈, 밑줄 문자로 구성되어야 한다
-- 비밀번호는 8자 이상의 문자로 구성되어야 한다
+**검증 규칙**:
+- 이메일 주소는 유일해야 함
+- 사용자 이름은 유일해야 함
+- 사용자 이름은 3자 이상의 영문자, 숫자, 하이픈, 밑줄로 구성
+- 비밀번호는 8자 이상
 
-테스트
-- [x] 올바르게 요청하면 204 No Content 상태코드를 반환한다
-- [x] email 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
-- [x] email 속성이 올바른 형식을 따르지 않으면 400 Bad Request 상태를 반환한다
-- [x] username 속성이 올바른 형식을 따르지 않으면 400 Bad Request 상태를 반환한다
-- [x] username 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
-- [x] username 속성이 올바른 형식을 따르면 204 No Content 상태코드를 반환한다
-- [x] password 속성이 올바른 형식을 따르지 않으면 400 Bad Request 상태를 반환한다
-- [x] password 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
-- [x] email 속성에 이미 존재하는 이메일주소가 지정되면 400 Bad Request를 반환한다
-- [x] username 속성에 이미 존재하는 사용자이름이 지정되면 400 Bad Request를 반환한다
-- [x] 비밀번호를 올바르게 암호화한다
-
-### 판매자 토큰 발행
-요청
-- 메서드: POST
-- 경로: /seller/issueToken
-- 헤더
-```
-Content-Type: application/json
-```
-- 본문
-```
-IssueSellerToken{
-  email: string,
-  password: string
-}
-```
+#### 판매자 토큰 발행
 ```bash
-curl -d '{ "email":"seller1@example.com", "password":"seller1password" }' \
+curl -d '{"email":"seller1@example.com", "password":"seller1password"}' \
 -H "Content-Type: application/json" \
--i -X POST http://localhost:8080/seller/issueToken
+-X POST http://localhost:8080/seller/issueToken
 ```
-성공 응답
-- 상태코드: 200 OK
-- 본문i
-```
-AccessTokenCarrier{
-  "accessToken": string
+
+**응답**: `200 OK`
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
-테스트
-- [x] 올바르게 요청하면 200 OK 상태코드를 반환한다
-- [x] 올바르게 요청하면 접근 토큰을 반환한다
-- [x] 접근 토큰은 JWT 형식을 따른다
-- [x] 존재하지 않는 이메일 주소로 요청하면 400 Bad Request 상태코드를 반환한다
-- [x] 잘못된 비밀번호로 요청하면 400 Bad Request 상태코드를 반환한다
-
-### 구매자 회원가입
-
-요청
-- 메서드: POST
-- 경로: /shopper/signUp
-- 헤더
-```
-Content-Type: application/json
-```
- 
-- 본문
-```
-CreateShopperCommand{
-  email: string,
-  username: string,
-  password: string
-}
-```
-
-
+#### 구매자 회원가입
 ```bash
-curl -d '{ "email":"seller1@example.com", "username":"seller1", "password":"seller1password" }' \
+curl -d '{"email":"shopper1@example.com", "username":"shopper1", "password":"shopper1password"}' \
 -H "Content-Type: application/json" \
--i -X POST http://localhost:8080/shopper/signUp
+-X POST http://localhost:8080/shopper/signUp
 ```
 
-성공 응답
-- 상태코드: 204 No Content
+**응답**: `204 No Content`
 
-정책
-- 이메일 주소는 유일해야한다
-- 사용자이름은 유일해야한다
-- 사용자 이릉은 3자 이상의 영문자, 숫자, 하이픈, 밑줄 문자로 구성되어야 한다
-- 비밀번호는 8자 이상의 문자로 구성되어야 한다
-
-테스트
-- [x] 올바르게 요청하면 204 No Content 상태코드를 반환한다
-- [x] email 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
-- [x] email 속성이 올바른 형식을 따르지 않으면 400 Bad Request 상태를 반환한다
-- [x] username 속성이 올바른 형식을 따르지 않으면 400 Bad Request 상태를 반환한다
-- [x] username 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
-- [x] username 속성이 올바른 형식을 따르면 204 No Content 상태코드를 반환한다
-- [x] password 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
-- [x] password 속성이 올바른 형식을 따르지 않으면 400 Bad Request 상태를 반환한다
-- [x] email 속성에 이미 존재하는 이메일주소가 지정되면 400 Bad Request를 반환한다
-- [x] username 속성에 이미 존재하는 사용자이름이 지정되면 400 Bad Request를 반환한다
-- [x] 비밀번호를 올바르게 암호화한다
-
-### 구매자 토큰 발행
-요청
-- 메서드: POST
-- 경로: /shopper/issueToken
-- 헤더
-```
-Content-Type: application/json
-```
-- 본문
-```
-IssueShopperToken{
-  email: string,
-  password: string
-}
-```
+#### 구매자 토큰 발행
 ```bash
-curl -d '{ "email":"shopper@example.com", "password":"shopper1password" }' \
+curl -d '{"email":"shopper1@example.com", "password":"shopper1password"}' \
 -H "Content-Type: application/json" \
--i -X POST http://localhost:8080/seller/issueToken
+-X POST http://localhost:8080/shopper/issueToken
 ```
-성공 응답
-- 상태코드: 200 OK
-- 본문
-```
-AccessTokenCarrier{
-  "accessToken": string
+
+**응답**: `200 OK`
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
-테스트
-- [x] ~올바르게 요청하면 200 OK 상태코드를 반환한다~
-- [x] 접근 토큰은 JWT 형식을 따른다
-- [x] 존재하지 않는 이메일 주소로 요청하면 400 Bad Request 상태코드를 반환한다
-- [x] 잘못된 비밀번호로 요청하면 400 Bad Request 상태코드를 반환한다
+### 판매자 API
 
-### 판매자 정보조회
+#### 판매자 정보 조회
 ```bash
-curl -i -X GET 'http://localhost:8080/seller/me' \
--H 'Authorization: Bearer {accessToken}'
+curl -X GET http://localhost:8080/seller/me \
+-H "Authorization: Bearer {accessToken}"
 ```
 
-성공 응답
-- 상태코드: 200 OK
-- 본문
-```
-SellerMeView {
-    id: String(UUID),
-    email: string,
-    username: string
+**응답**: `200 OK`
+```json
+{
+  "id": "uuid",
+  "email": "seller1@example.com",
+  "username": "seller1",
+  "contactEmail": "contact@example.com"
 }
 ```
 
-테스트
-- [x] 올바르게 요청하면 200 OK  상태코드를 반환한다
-- [x] 접근 토큰을 사용하지 않으면 401 Unauthorized 상태코드를 반환한다.
-- [x] 서로 다른 판매자의 식별자는 서로 다르다
-- [x] 같은 판매자의 식별자는 항상 같다
-- [x] 판매자의 기본 정보가 올바르게 설정된다
-
-
-### 구매자 정보조회
+#### 문의 이메일 변경
 ```bash
-curl -i -X GET 'http://localhost:8080/shopper/me' \
--H 'Authorization: Bearer {accessToken}'
+curl -X POST http://localhost:8080/seller/changeContactEmail \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer {accessToken}" \
+-d '{"contactEmail": "new-contact@example.com"}'
 ```
 
-성공 응답
-- 상태코드: 200 OK
-- 본문
-```
-ShopperMeView {
-    id: String(UUID),
-    email: string,
-    username: string
-}
-```
+**응답**: `204 No Content`
 
-테스트
-- [x] 올바르게 요청하면 200 OK  상태코드를 반환한다
-- [x] 접근 토큰을 사용하지 않으면 401 Unauthorized 상태코드를 반환한다.
-- [x] 서로 다른 판매자의 식별자는 서로 다르다
-- [x] 같은 판매자의 식별자는 항상 같다
-- [x] 구매자의 기본 정보가 올바르게 설정된다
-
-### 판매자 상품 등록
-요청
-- 메서드: POST
-- 경로: /seller/product
-- 헤더
-```Content-Type: application/json
-Authorization: Bearer {accessToken}
-```
-- 본문
-```
-CreateProductCommand {
-  name: string,
-  price: number,
-  description: string
-}
-```
-
+#### 상품 등록
 ```bash
-curl -d '{ "name":"상품1", "price":1000, "description":"상품1 설명" }' \
--H "Content-Type: application/json"
+curl -d '{"name":"상품1", "imageUri":"https://example.com/image.jpg", "description":"상품 설명", "priceAmount":10000, "stockQunatity":100}' \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer {accessToken}" \
+-X POST http://localhost:8080/seller/products
 ```
 
-성공 응답
-- 상태코드: 201 Created
-- 헤더
-```
-Location: /seller/products/{productId}
-```
+**응답**: `201 Created`
+- **Location 헤더**: `/seller/products/{productId}`
 
-테스트
-- [x] 올바르게 요청하면 201 Created 상태코드를 반환한다
-- [x] 판매자가 아닌 사용자가 요청하면 403 Forbidden 상태코드를 반환한다
-- [x] imageUri 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
-- [x] 올바르게 요청하면 등록된 상품 정보에 접근하는 Location 헤더를 반환한다
-
-
-### 판매자 상품 조회
-요청
-- 메서드: GET
-- 경로: /seller/product/{productId}
-- 헤더
-```
-Authorization: Bearer {accessToken}
-```
-
+#### 판매자 상품 목록 조회
 ```bash
-curl -i -X GET 'http://localhost:8080/seller/product/{productId}' \
-- H "Authorization: Bearer {accessToken}"
+curl -X GET http://localhost:8080/seller/products \
+-H "Authorization: Bearer {accessToken}"
 ```
 
-성공 응답
-- 상태코드: 201 Created
-- 본문
-```SellerProductView {
-  id: String(UUID),
-  name: string,
-  imageUri: string,
-  description: string
-  priceAmount: number,
-  stockQuantity: number,
-  registeredTimeUtc: string(YYYY-MM-DDTHH:mm:ss.sss)
+**응답**: `200 OK`
+```json
+{
+  "items": [
+    {
+      "id": "uuid",
+      "name": "상품1",
+      "imageUri": "https://example.com/image.jpg",
+      "description": "상품 설명",
+      "priceAmount": 10000,
+      "stockQuantity": 100,
+      "registeredTimeUtc": "2025-01-01T00:00:00.000"
+    }
+  ]
 }
 ```
 
-
-테스트
-- [x] 올바르게 요청하면 200 OK 상태코드를 반환한다
-- [x] 판매자가 아닌 사용자가 요청하면 403 Forbidden 상태코드를 반환한다
-- [x] 존재하지 않는 상품 식별자로 요청하면 404 Not Found 상태코드를 반환한다
-- [x] 다른 판매자가 등록한 상품 식별자로 요청하면 404 Not Found 상태코드를 반환한다
-- [x] 상품 식별자를 올바르게 반환한다
-- [x] 상품 정보를 올바르게 반환한다
-- [x] 상품 등록 시각을 올바르게 반환한다
-
-
-### 판매자 상품 목록 조회
-요청
-- 메서드: GET
-- 경로: /seller/products
-- 헤더
-```
-Authorization: Bearer {accessToken}
-```
-
+#### 판매자 상품 상세 조회
 ```bash
-curl -i -X GET 'http://localhost:8080/seller/products' \
-              'Authorization': 'Bearer {accessToken}'
+curl -X GET http://localhost:8080/seller/products/{productId} \
+-H "Authorization: Bearer {accessToken}"
 ```
 
-응답
-성공응답
-- 상태코드: 200 OK
-- 본문
+**응답**: `200 OK` (상품 상세 정보)
+
+### 구매자 API
+
+#### 구매자 정보 조회
+```bash
+curl -X GET http://localhost:8080/shopper/me \
+-H "Authorization: Bearer {accessToken}"
 ```
-ArrayCarrier<SellerProductView> {
-  items: [SellerProductView {
-    id: String(UUID),
-    name: string,
-    imageUri: string,
-    description: string,
-    priceAmount: number,
-    stockQuantity: number,
-    registeredTimeUtc: string(YYYY-MM-DDTHH:mm:ss.sss)
-  }]
+
+**응답**: `200 OK`
+```json
+{
+  "id": "uuid",
+  "email": "shopper1@example.com",
+  "username": "shopper1"
 }
 ```
 
-요구사항
-- [x] 올바르게 요청하면 200 OK 상태코드를 반환한다
-- [x] 판매자가 등록한 상품 목록을 반환한다
-- [x] 다른 판매자가 등록한 상품이 포함되지 않는다
-- [x] 상품 정보를 올바르게 반환한다
-- [x] 상품 등록 시각을 올바르게 반환한다
-- [x] 상품 목록을 등록 시점 역순으로 정렬한다
-
-
-### 구매자 상품 탐색 API 명세
-요청
-- 메서드: GET 
-- 경로: /shopper/products
-- 쿼리 매개변수: continuationToken: string?
-- 헤더
-
-```
-Authorization: Bearer {accessToken}
-```
-
+#### 상품 탐색 (페이지네이션)
 ```bash
-curl -i -X GET 'http://localhost:8080/shopper/products' \
-              -H 'Authorization
-: Bearer {accessToken}'
+# 첫 페이지
+curl -X GET http://localhost:8080/shopper/products \
+-H "Authorization: Bearer {accessToken}"
+
+# 다음 페이지
+curl -X GET "http://localhost:8080/shopper/products?continuationToken={token}" \
+-H "Authorization: Bearer {accessToken}"
 ```
 
-성공 응답
-- 상태코드: 200 OK
-- 본문
-```
-ArrayCarrier<ShopperProductView> {
-  items: [ProductView {
-    id: String(UUID),
-    seller: SellerView {
-      id: String(UUID),
-      username: string
-    },
-    name: string,
-    imageUri: string,
-    description: string,
-    priceAmount: number,
-    stockQuantity: number,
-  }],
-  contunuationToken: string
+**응답**: `200 OK`
+```json
+{
+  "items": [
+    {
+      "id": "uuid",
+      "seller": {
+        "id": "uuid",
+        "username": "seller1"
+      },
+      "name": "상품1",
+      "imageUri": "https://example.com/image.jpg",
+      "description": "상품 설명",
+      "priceAmount": 10000,
+      "stockQuantity": 100
+    }
+  ],
+  "contunuationToken": "base64-encoded-token"
 }
 ```
-요구사항
-- [x] 올바르게 요청하면 200 OK 상태코드를 반환한다
-- [x] 판매자 접근 토큰을 사용하면 403 Forbidden 상태코드를 반환한다
-- [x] 첫 번째 페이지의 상품을 반환한다
-- [x] 상품 목록을 등록 시점 역순으로 정렬한다
-- [x] 상품 속성을 올바르게 반환한다
-- [x] 판매자 정보를 올바르게 반환한다
-- [x] 두 번째 페이지를 올바르게 반환한다
-- [x] 마지막 페이지를 올바르게 반환한다
-- [x] continuationToken 매개변수에 빈 문자열이 지정되면 첫 번째 페이지를 반환한다
 
-### 문의 이메일 변경 API 명세
-본문
-```
-ChangeContactEmailCommand {
-  contactEmail: string
-}
+## 테스트 커버리지
+
+모든 API 엔드포인트에 대한 통합 테스트가 작성되어 있으며, 주요 테스트 시나리오는 다음과 같습니다:
+
+- ✅ 정상 요청 처리
+- ✅ 입력 검증 (이메일 형식, 사용자 이름 규칙, 비밀번호 길이)
+- ✅ 중복 데이터 검증 (이메일, 사용자 이름)
+- ✅ 인증/인가 검증 (JWT 토큰, 스코프)
+- ✅ 비즈니스 로직 검증 (비밀번호 암호화, 상품 권한 등)
+- ✅ 페이지네이션 동작 확인
+
+## 프로젝트 구조
 
 ```
-요청
-- 메서드: PUT
-- 경로: /seller/me/email
-- 헤더
-```bash
-curl -i -X PUT 'http://localhost:8080/seller/changeContactEmail' \
--H 'Content-Type: application/json' \
--H 'Authorization: Bearer {accessToken}' \
--d '{
-    "contactEmail": "contactEmail@example.com"
-    }'
+src/main/java/com/demo/book/springtdd/
+├── adapter/
+│   ├── in/
+│   │   ├── controller/          # REST API 컨트롤러
+│   │   ├── dto/
+│   │   │   ├── command/         # 쓰기 작업 DTO
+│   │   │   ├── query/           # 읽기 작업 DTO
+│   │   │   ├── view/            # 응답 DTO
+│   │   │   └── result/          # 결과 래퍼
+│   │   └── support/             # 검증 유틸리티
+│   └── out/
+│       └── persistence/         # JPA 리포지토리 어댑터
+├── application/
+│   ├── port/
+│   │   ├── in/                  # 인바운드 포트 (유스케이스 인터페이스)
+│   │   └── out/                 # 아웃바운드 포트 (영속성 인터페이스)
+│   └── usecase/                 # 유스케이스 구현
+├── domain/
+│   ├── model/
+│   │   ├── command/             # 커맨드 실행자
+│   │   └── query/               # 쿼리 프로세서
+│   ├── exception/               # 도메인 예외
+│   └── *.java                   # 도메인 엔티티 (Seller, Shopper, Product)
+├── infrastructure/              # 인프라 설정 (Security, JWT)
+└── config/                      # 애플리케이션 설정
 ```
 
-성공 응답
-- 상태코드: 204 No Content
+## 다음 단계
 
-테스트
-- [x] 올바르게 요청하면 204 No Content 상태코드를 반환한다
-- [x] contactEmail 속성이 지정되지 않으면 400 Bad Request 상태코드를 반환한다
-- [x] 문의 이메일 주소를 올바르게 변경한다
+1. **남은 Controller 리팩토링** (7개)
+   - record → class 전환
+   - Repository 직접 의존성 제거
+   - UseCase/Port 패턴 적용
+
+2. **UseCase 계층 완성** (7개)
+   - 모든 비즈니스 로직을 UseCase로 이동
+   - Command/Query Processor를 UseCase로 전환
+
+3. **코드 품질 개선**
+   - 불필요한 import 제거
+   - HTTP 관심사 분리 (UseCase에서 ResponseEntity 제거)
+   - 단위 테스트 추가
+
+4. **Kotlin 전환**
+   - Java → Kotlin 마이그레이션
+   - data class, sealed class 활용
+   - Coroutine 적용 검토
+
+## 라이센스
+
+이 프로젝트는 학습 목적으로 작성되었습니다.

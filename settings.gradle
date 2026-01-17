@@ -1,1 +1,7 @@
 rootProject.name = 'spring-tdd'
+
+include 'common'
+include 'seller'
+include 'shopper'
+include 'product'
+include 'bootstrap'

@@ -1,0 +1,16 @@
+server:
+  port: 8091
+
+security:
+  jwt:
+    secret: c2f3e8b4-9d4b-4a6e-8f3e-2d7c9a1b5e6f
+    expiration-hours: 24
+    issuer: spring-tdd-book
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha

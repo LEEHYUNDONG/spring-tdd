@@ -37,11 +37,19 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(c -> c.jwt(jwt -> jwt.decoder(jwtDecoder)))
                 .authorizeHttpRequests(requests -> requests
+                        // Swagger UI
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/api-docs/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        // Seller
                         .requestMatchers("/seller/signUp").permitAll()
                         .requestMatchers("/seller/issueToken").permitAll()
                         .requestMatchers("/seller/**").access(hasScope("seller"))
+                        // Shopper
                         .requestMatchers("/shopper/signUp").permitAll()
                         .requestMatchers("/shopper/issueToken").permitAll()
+                        .requestMatchers("/orders/**").access(hasScope("shopper"))
                         .requestMatchers("/shopper/**").access(hasScope("shopper"))
                         .anyRequest().authenticated()
                 ).build();

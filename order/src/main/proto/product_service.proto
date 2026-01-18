@@ -1,0 +1,48 @@
+syntax="proto3";
+
+option java_multiple_files = true;
+option java_package = "com.demo.book.springtdd.order.adapter.out.grpc.proto";
+option java_outer_classname = "ProductServiceProto";
+
+package product;
+
+service ProductService {
+
+  rpc FindProductById(ProductId) returns (ProductView);
+  rpc FindProductBySellerId(SellerId) returns (ProductView);
+  rpc DecreaseStock(DecreaseStockRequest) returns (DecreaseStockResponse);
+
+}
+
+message ProductId {
+  string productId = 1;
+}
+
+message SellerId {
+  string sellerId = 1;
+}
+
+message DecreaseStockRequest {
+  string productId = 1;
+  int32 quantity = 2;
+}
+
+message DecreaseStockResponse {
+  bool success = 1;
+}
+
+message ProductView {
+  string id = 1;
+  SellerView seller = 2;
+  string name = 3;
+  string imageUri = 4;
+  string description = 5;
+  uint64 priceAmount = 6;
+  int32 stockQuantity = 7;
+}
+
+message SellerView {
+  string id = 1;
+  string username = 2;
+  string contactEmail = 3;
+}

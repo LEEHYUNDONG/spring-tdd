@@ -12,7 +12,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(':common')
+    implementation project(':core')
 
     // gRPC 클라이언트
     implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"

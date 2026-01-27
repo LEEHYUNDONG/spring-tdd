@@ -1,6 +1,6 @@
 rootProject.name = 'spring-tdd'
 
-include 'common'
+include 'core'
 include 'seller'
 include 'shopper'
 include 'product'

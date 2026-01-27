@@ -14,7 +14,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(':common')
+    implementation project(':core')
     implementation project(':seller')
 
     // grpc 프로토콜 버터를 사용하기 위한 핵심 라이브러리 (Protobuf 메시지의 직렬화 및 역직렬화를 지원합니다.)

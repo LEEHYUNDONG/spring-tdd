@@ -1,7 +1,8 @@
 package com.demo.book.springtdd.shopper.adapter.in.controller;
 
-import com.demo.book.springtdd.shopper.adapter.in.dto.command.CreateShopperCommand;
+import com.demo.book.springtdd.shopper.adapter.in.dto.request.CreateShopperRequest;
 import com.demo.book.springtdd.shopper.application.port.in.ForCreatingShopper;
+import com.demo.book.springtdd.shopper.application.port.in.command.CreateShopperCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,19 +18,24 @@ public class ShopperSignUpController {
     private final ForCreatingShopper forCreatingShopper;
 
     @PostMapping("/shopper/signUp")
-    public ResponseEntity<?> signUp(@RequestBody CreateShopperCommand command) {
-        if (isCommandNotValid(command)) {
+    public ResponseEntity<?> signUp(@RequestBody CreateShopperRequest request) {
+        if (isRequestNotValid(request)) {
             return ResponseEntity.badRequest().build();
         }
 
+        var command = new CreateShopperCommand(
+                request.email(),
+                request.username(),
+                request.password()
+        );
         forCreatingShopper.signUp(command);
 
         return ResponseEntity.noContent().build();
     }
 
-    public static boolean isCommandNotValid(CreateShopperCommand command) {
-        return !isEmailValid(command.email()) ||
-                !isUsernameValid(command.username()) ||
-                !isPasswordValid(command.password());
+    public static boolean isRequestNotValid(CreateShopperRequest request) {
+        return !isEmailValid(request.email()) ||
+                !isUsernameValid(request.username()) ||
+                !isPasswordValid(request.password());
     }
 }

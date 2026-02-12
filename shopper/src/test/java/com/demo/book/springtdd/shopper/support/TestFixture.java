@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.shopper.support;
 
-import com.demo.book.springtdd.shopper.adapter.in.dto.command.CreateShopperCommand;
-import com.demo.book.springtdd.shopper.adapter.in.dto.query.IssueShopperToken;
+import com.demo.book.springtdd.shopper.adapter.in.dto.request.CreateShopperRequest;
+import com.demo.book.springtdd.shopper.adapter.in.dto.request.IssueShopperTokenRequest;
 import com.demo.book.springtdd.shopper.adapter.in.dto.result.AccessTokenCarrier;
 import com.demo.book.springtdd.shopper.adapter.in.dto.view.ShopperMeView;
 import io.jsonwebtoken.Claims;
@@ -35,11 +35,11 @@ public record TestFixture(
     }
 
     public void createShopper(String email, String username, String password) {
-        var command = new CreateShopperCommand(email, username, password);
+        var request = new CreateShopperRequest(email, username, password);
         ensureSuccessful(
                 client.postForEntity("/shopper/signUp",
-                        command, Void.class),
-                command);
+                        request, Void.class),
+                request);
     }
 
     private void ensureSuccessful(ResponseEntity<Void> response,
@@ -53,7 +53,7 @@ public record TestFixture(
     public String issueShopperToken(String email, String password) {
         AccessTokenCarrier carrier = client.postForObject(
                 "/shopper/issueToken",
-                new IssueShopperToken(email, password),
+                new IssueShopperTokenRequest(email, password),
                 AccessTokenCarrier.class);
         return requireNonNull(carrier).accessToken();
     }

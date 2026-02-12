@@ -1,6 +1,6 @@
 package com.demo.book.springtdd.seller.integration.singup;
 
-import com.demo.book.springtdd.seller.adapter.in.dto.command.CreateSellerCommand;
+import com.demo.book.springtdd.seller.adapter.in.dto.request.CreateSellerRequest;
 import com.demo.book.springtdd.seller.domain.Seller;
 import com.demo.book.springtdd.seller.adapter.out.persistence.repository.SellerRepository;
 import com.demo.book.springtdd.seller.support.TestFixture;
@@ -27,7 +27,7 @@ public class POST_specs {
     @Test
     void 올바르게_요청하면_204_No_Content_상태코드를_반환한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateSellerCommand(
+        var command = new CreateSellerRequest(
                 generateEmail(),
                 generateUsername(),
                 generatePassword(),
@@ -43,7 +43,7 @@ public class POST_specs {
     @Test
     void email_속성이_지정되지_않으면_400_Bad_Request_상태코드를_반환한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateSellerCommand(null, generateUsername(), "password", generateEmail());
+        var command = new CreateSellerRequest(null, generateUsername(), "password", generateEmail());
 
         //act
         ResponseEntity<Void> response = client.postForEntity("/seller/signUp", command, Void.class);
@@ -56,7 +56,7 @@ public class POST_specs {
     @MethodSource("com.demo.book.springtdd.testutils.TestDatasource#invalidEmail")
     void email_속성이_올바른_형식을_따르지_않으면_400_Bad_Request_상태를_반환한다(String email, @Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateSellerCommand(email, generateUsername(), "password", generateEmail());
+        var command = new CreateSellerRequest(email, generateUsername(), "password", generateEmail());
 
         //act
         ResponseEntity<Void> response = client.postForEntity("/seller/signUp", command, Void.class);
@@ -69,7 +69,7 @@ public class POST_specs {
     void username_속성이_지정되지_않으면_400_Bad_Request_상태코드를_반환한다(@Autowired TestRestTemplate testRestTemplate) {
         //arrange
         //arrange
-        var command = new CreateSellerCommand(generateEmail(), null, "password", generateEmail());
+        var command = new CreateSellerRequest(generateEmail(), null, "password", generateEmail());
 
         //act
         ResponseEntity<Void> response = testRestTemplate.postForEntity("/seller/signUp", command, Void.class);
@@ -93,7 +93,7 @@ public class POST_specs {
     })
     void username_속성이_올바른_형식을_따르지_않으면_400_bad_request_상태를_반환한다(String username, @Autowired TestRestTemplate testRestTemplate) {
         //arrange
-        var command = new CreateSellerCommand(generateEmail(), username, "password", generateEmail());
+        var command = new CreateSellerRequest(generateEmail(), username, "password", generateEmail());
 
         //act
         ResponseEntity<Void> response = testRestTemplate.postForEntity("/seller/signUp", command, Void.class);
@@ -105,7 +105,7 @@ public class POST_specs {
     @Test
     void password_속성이_지정되지_않으면_400_Bad_Request_상태코드를_반환한다(@Autowired TestRestTemplate testRestTemplate) {
         // argange
-        var command = new CreateSellerCommand(
+        var command = new CreateSellerRequest(
                 generateEmail(),
                 "test01",
                 null,
@@ -129,7 +129,7 @@ public class POST_specs {
     })
     void password_속성이_올바른_형식을_따르지_않으면_400_Bad_Request_상태를_반환한다(String password, @Autowired TestRestTemplate testRestTemplate) {
         // arrange
-        var command = new CreateSellerCommand("test@test.com", "test01", password, generateEmail());
+        var command = new CreateSellerRequest("test@test.com", "test01", password, generateEmail());
 
         //act
         ResponseEntity<Void> response = testRestTemplate.postForEntity("/seller/signUp", command, Void.class);
@@ -141,7 +141,7 @@ public class POST_specs {
     @Test
     void email_속성에_이미_존재하는_이메일주소가_지정되면_400_Bad_Request를_반환한다(@Autowired TestRestTemplate testRestTemplate) {
         //arrange
-        var command = new CreateSellerCommand("test@test.com", "test01", "password!123", generateEmail());
+        var command = new CreateSellerRequest("test@test.com", "test01", "password!123", generateEmail());
         testRestTemplate.postForEntity("/seller/signUp", command, Void.class);
 
         //act
@@ -155,11 +155,11 @@ public class POST_specs {
     void username_속성에_이미_존재하는_사용자이름이_지정되면_400_Bad_Request를_반환한다(@Autowired TestRestTemplate testRestTemplate) {
         //arrange
         String username = generateUsername();
-        var command = new CreateSellerCommand(generateEmail(), username, "password!123", generateEmail());
+        var command = new CreateSellerRequest(generateEmail(), username, "password!123", generateEmail());
         testRestTemplate.postForEntity("/seller/signUp", command, Void.class);
 
         //act
-        ResponseEntity<Void> response = testRestTemplate.postForEntity("/seller/signUp", new CreateSellerCommand(generateEmail(), username, "anotherPassword!123", generateEmail()), Void.class);
+        ResponseEntity<Void> response = testRestTemplate.postForEntity("/seller/signUp", new CreateSellerRequest(generateEmail(), username, "anotherPassword!123", generateEmail()), Void.class);
 
         //assert
         assertThat(response.getStatusCode().value()).isEqualTo(400);
@@ -172,7 +172,7 @@ public class POST_specs {
             @Autowired PasswordEncoder passwordEncoder
     ) {
         //arrange
-        var command = new CreateSellerCommand(generateEmail(), generateUsername(), generatePassword(), generateEmail());
+        var command = new CreateSellerRequest(generateEmail(), generateUsername(), generatePassword(), generateEmail());
 
         //act
         testRestTemplate.postForEntity("/seller/signUp", command, Void.class);
@@ -198,7 +198,7 @@ public class POST_specs {
             @Autowired TestFixture fixture
             ) {
         //arrange
-        var command = new CreateSellerCommand(generateEmail(), generateUsername(), generatePassword(), contactEmail);
+        var command = new CreateSellerRequest(generateEmail(), generateUsername(), generatePassword(), contactEmail);
 
         //act
         ResponseEntity<Void> response = fixture.client().postForEntity(

@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.seller.integration.me;
 
-import com.demo.book.springtdd.seller.adapter.in.dto.command.CreateSellerCommand;
-import com.demo.book.springtdd.seller.adapter.in.dto.query.IssueSellerToken;
+import com.demo.book.springtdd.seller.adapter.in.dto.request.CreateSellerRequest;
+import com.demo.book.springtdd.seller.adapter.in.dto.request.IssueSellerTokenRequest;
 import com.demo.book.springtdd.seller.adapter.in.dto.result.AccessTokenCarrier;
 import com.demo.book.springtdd.seller.support.TestFixture;
 import com.demo.book.springtdd.seller.support.ApiTest;
@@ -29,7 +29,7 @@ public class GET_specs {
         String email = generateEmail();
         String username = generateUsername();
         String password = generatePassword();
-        var seller = new CreateSellerCommand(
+        var seller = new CreateSellerRequest(
                 email,
                 username,
                 password,
@@ -39,7 +39,7 @@ public class GET_specs {
                 , seller, Void.class);
 
         AccessTokenCarrier carrier = client.postForObject("/seller/issueToken",
-                new IssueSellerToken(email, password),
+                new IssueSellerTokenRequest(email, password),
                 AccessTokenCarrier.class);
 
         String accessToken = carrier.accessToken();
@@ -58,7 +58,7 @@ public class GET_specs {
     @Test
     void 접근_토큰을_사용하지_않으면_401_Unauthorized_상태코드를_반환한다(@Autowired TestRestTemplate client) {
         // arrange
-        var seller = new CreateSellerCommand(
+        var seller = new CreateSellerRequest(
                 generateEmail(),
                 generateUsername(),
                 generatePassword(),
@@ -76,7 +76,7 @@ public class GET_specs {
     @Test
     void 서로_다른_판매자의_식별자는_서로_다르다(@Autowired TestRestTemplate client) {
         // arrange
-        var seller1 = new CreateSellerCommand(
+        var seller1 = new CreateSellerRequest(
                 generateEmail(),
                 generateUsername(),
                 generatePassword(),
@@ -84,7 +84,7 @@ public class GET_specs {
         );
         client.postForEntity("/seller/signUp", seller1, Void.class);
 
-        var seller2 = new CreateSellerCommand(
+        var seller2 = new CreateSellerRequest(
                 generateEmail(),
                 generateUsername(),
                 generatePassword(),
@@ -93,10 +93,10 @@ public class GET_specs {
         client.postForEntity("/seller/signUp", seller2, Void.class);
 
         AccessTokenCarrier carrier1 = client.postForObject("/seller/issueToken",
-                new IssueSellerToken(seller1.email(), seller1.password()),
+                new IssueSellerTokenRequest(seller1.email(), seller1.password()),
                 AccessTokenCarrier.class);
         AccessTokenCarrier carrier2 = client.postForObject("/seller/issueToken",
-                new IssueSellerToken(seller2.email(), seller2.password()),
+                new IssueSellerTokenRequest(seller2.email(), seller2.password()),
                 AccessTokenCarrier.class);
 
         //act
@@ -119,7 +119,7 @@ public class GET_specs {
     @Test
     void 같은_판매자의_식별자는_항상_같다(@Autowired TestRestTemplate client) {
         // arrange
-        var seller = new CreateSellerCommand(
+        var seller = new CreateSellerRequest(
                 generateEmail(),
                 generateUsername(),
                 generatePassword(),
@@ -129,10 +129,10 @@ public class GET_specs {
         client.postForEntity("/seller/signUp", seller, Void.class);
 
         AccessTokenCarrier carrier1 = client.postForObject("/seller/issueToken",
-                new IssueSellerToken(seller.email(), seller.password()),
+                new IssueSellerTokenRequest(seller.email(), seller.password()),
                 AccessTokenCarrier.class);
         AccessTokenCarrier carrier2 = client.postForObject("/seller/issueToken",
-                new IssueSellerToken(seller.email(), seller.password()),
+                new IssueSellerTokenRequest(seller.email(), seller.password()),
                 AccessTokenCarrier.class);
 
         //act
@@ -156,7 +156,7 @@ public class GET_specs {
     @Test
     void 판매자의_기본_정보가_올바르게_설정된다(@Autowired TestRestTemplate client) {
         // arrange
-        var seller = new CreateSellerCommand(
+        var seller = new CreateSellerRequest(
                 generateEmail(),
                 generateUsername(),
                 generatePassword(),
@@ -168,7 +168,7 @@ public class GET_specs {
         client.postForEntity("/seller/signUp", seller, Void.class);
 
         AccessTokenCarrier carrier = client.postForObject("/seller/issueToken",
-                new IssueSellerToken(seller.email(), seller.password()),
+                new IssueSellerTokenRequest(seller.email(), seller.password()),
                 AccessTokenCarrier.class);
 
         //act
@@ -198,7 +198,7 @@ public class GET_specs {
 
         AccessTokenCarrier carrier = fixture.client().postForObject(
                 "/seller/issueToken",
-                new IssueSellerToken(email, password),
+                new IssueSellerTokenRequest(email, password),
                 AccessTokenCarrier.class
         );
         String token = carrier.accessToken();

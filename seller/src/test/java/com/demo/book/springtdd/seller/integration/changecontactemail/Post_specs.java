@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.seller.integration.changecontactemail;
 
 import com.demo.book.springtdd.seller.support.InvalidEmailSource;
-import com.demo.book.springtdd.seller.adapter.in.dto.command.ChangeContactEmailCommand;
+import com.demo.book.springtdd.seller.adapter.in.dto.command.ChangeContactEmailRequest;
 import com.demo.book.springtdd.seller.support.TestFixture;
 import com.demo.book.springtdd.seller.support.ApiTest;
 import com.demo.book.springtdd.seller.adapter.in.dto.view.SellerMeView;
@@ -25,7 +25,7 @@ public class Post_specs {
         // arrange
         fixture.createSellerThenSetAsDefaultUser();
         String contactEmail = "example@example.com";
-        var command = new ChangeContactEmailCommand(contactEmail);
+        var command = new ChangeContactEmailRequest(contactEmail);
         // act
         ResponseEntity<Void> response = fixture.client().postForEntity("/seller/changeContactEmail",
                 command,
@@ -45,7 +45,7 @@ public class Post_specs {
     ) {
         // arrange
         fixture.createSellerThenSetAsDefaultUser();
-        var command = new ChangeContactEmailCommand(contactEmail);
+        var command = new ChangeContactEmailRequest(contactEmail);
         // act
         ResponseEntity<Void> response = fixture.client().postForEntity("/seller/changeContactEmail",
                 command,
@@ -66,7 +66,7 @@ public class Post_specs {
 
         // act
         ResponseEntity<Void> response = fixture.client().postForEntity("/seller/changeContactEmail",
-                new ChangeContactEmailCommand(newContactEmail),
+                new ChangeContactEmailRequest(newContactEmail),
                 Void.class
         );
         // assert

@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.seller.integration.issuetoken;
 
-import com.demo.book.springtdd.seller.adapter.in.dto.command.CreateSellerCommand;
-import com.demo.book.springtdd.seller.adapter.in.dto.query.IssueSellerToken;
+import com.demo.book.springtdd.seller.adapter.in.dto.request.CreateSellerRequest;
+import com.demo.book.springtdd.seller.adapter.in.dto.request.IssueSellerTokenRequest;
 import com.demo.book.springtdd.seller.adapter.in.dto.result.AccessTokenCarrier;
 import com.demo.book.springtdd.seller.support.ApiTest;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -35,7 +35,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        var response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        var response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), Void.class);
@@ -49,7 +49,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -57,7 +57,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -72,7 +72,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -80,7 +80,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -95,7 +95,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -103,7 +103,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -118,7 +118,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -126,7 +126,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -141,7 +141,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -149,7 +149,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -164,7 +164,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -172,7 +172,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -187,7 +187,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -195,7 +195,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -210,7 +210,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -218,7 +218,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -233,7 +233,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -241,7 +241,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -256,7 +256,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -264,7 +264,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -279,7 +279,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -287,7 +287,7 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -302,7 +302,7 @@ public class POST_specs {
         //arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -310,12 +310,12 @@ public class POST_specs {
         ), Void.class);
 
         //act
-        ResponseEntity<AccessTokenCarrier> response1 = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response1 = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
 
-        ResponseEntity<AccessTokenCarrier> response2 = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<AccessTokenCarrier> response2 = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 password
         ), AccessTokenCarrier.class);
@@ -347,7 +347,7 @@ public class POST_specs {
         // arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -355,7 +355,7 @@ public class POST_specs {
         ), Void.class);
 
         // act
-        ResponseEntity<Void> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<Void> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 generateEmail(),
                 password
         ), Void.class);
@@ -371,7 +371,7 @@ public class POST_specs {
         // arrange
         String email = generateEmail();
         String password = generatePassword();
-        client.postForEntity("/seller/signUp", new CreateSellerCommand(
+        client.postForEntity("/seller/signUp", new CreateSellerRequest(
                 email,
                 generateUsername(),
                 password,
@@ -380,7 +380,7 @@ public class POST_specs {
 
         // act
         String wrongPassword = generatePassword();
-        ResponseEntity<Void> response = client.postForEntity("/seller/issueToken", new IssueSellerToken(
+        ResponseEntity<Void> response = client.postForEntity("/seller/issueToken", new IssueSellerTokenRequest(
                 email,
                 wrongPassword
         ), Void.class);

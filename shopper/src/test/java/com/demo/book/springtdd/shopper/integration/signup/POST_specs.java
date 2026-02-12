@@ -1,6 +1,6 @@
 package com.demo.book.springtdd.shopper.integration.signup;
 
-import com.demo.book.springtdd.shopper.adapter.in.dto.command.CreateShopperCommand;
+import com.demo.book.springtdd.shopper.adapter.in.dto.request.CreateShopperRequest;
 import com.demo.book.springtdd.shopper.adapter.out.persistence.repository.ShopperRepository;
 import com.demo.book.springtdd.shopper.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ public class POST_specs {
             @Autowired TestRestTemplate client
     ) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -45,7 +45,7 @@ public class POST_specs {
     @Test
     void email_속성이_지정되지_않으면_400_Bad_Request_상태코드를_반환한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(
+        var command = new CreateShopperRequest(
                 null,
                 generateUsername(),
                 generatePassword()
@@ -75,7 +75,7 @@ public class POST_specs {
             @Autowired TestRestTemplate client
     ) {
         //arrange
-        var command = new CreateShopperCommand(
+        var command = new CreateShopperRequest(
                 invalidEmail,
                 generateUsername(),
                 generatePassword()
@@ -97,7 +97,7 @@ public class POST_specs {
             @Autowired TestRestTemplate client
     ){
         //arrange
-        var command = new CreateShopperCommand(
+        var command = new CreateShopperRequest(
                 generateEmail(),
                 "invalid-username!",
                 generatePassword()
@@ -125,7 +125,7 @@ public class POST_specs {
     })
     void username_속성이_지정되지_않으면_400_Bad_Request_상태코드를_반환한다(String invalidUsername, @Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(
+        var command = new CreateShopperRequest(
                 generateEmail(),
                 invalidUsername,
                 generatePassword()
@@ -151,7 +151,7 @@ public class POST_specs {
     })
     void username_속성이_올바른_형식을_따르면_204_No_Content_상태코드를_반환한다(String validUsername, @Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(
+        var command = new CreateShopperRequest(
                 generateEmail(),
                 validUsername,
                 generatePassword()
@@ -176,7 +176,7 @@ public class POST_specs {
 
 
         // act
-        ResponseEntity<Void> response = client.postForEntity("/shopper/signUp", new CreateShopperCommand(
+        ResponseEntity<Void> response = client.postForEntity("/shopper/signUp", new CreateShopperRequest(
                 email,
                 generateUsername(),
                 invalidPassword
@@ -190,7 +190,7 @@ public class POST_specs {
     void email_속성에_이미_존재하는_이메일주소가_지정되면_400_Bad_Request를_반환한다(@Autowired TestRestTemplate client) {
         //arrange
         var existingEmail = generateEmail();
-        var command = new CreateShopperCommand(
+        var command = new CreateShopperRequest(
                 existingEmail,
                 generateUsername(),
                 generatePassword()
@@ -217,7 +217,7 @@ public class POST_specs {
     void username_속성에_이미_존재하는_사용자이름이_지정되면_400_Bad_Request를_반환한다(@Autowired TestRestTemplate client) {
         // arrange
         var existingUsername = generateUsername();
-        var command = new CreateShopperCommand(
+        var command = new CreateShopperRequest(
                 generateEmail(),
                 existingUsername,
                 generatePassword()
@@ -245,7 +245,7 @@ public class POST_specs {
         String email = generateEmail();
         String username = generateUsername();
         String password = generatePassword();
-        var command = new CreateShopperCommand(email, username, password);
+        var command = new CreateShopperRequest(email, username, password);
 
         // act
         ResponseEntity<Void> response = client.postForEntity(

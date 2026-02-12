@@ -1,6 +1,6 @@
 package com.demo.book.springtdd.seller.application.usecase;
 
-import com.demo.book.springtdd.seller.adapter.in.dto.command.CreateSellerCommand;
+import com.demo.book.springtdd.seller.application.port.in.command.CreateSellerCommand;
 import com.demo.book.springtdd.seller.application.port.in.ForCreatingSeller;
 import com.demo.book.springtdd.seller.application.port.out.CreateSellerPort;
 import com.demo.book.springtdd.seller.domain.Seller;

@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.shopper.integration.issuetoken;
 
-import com.demo.book.springtdd.shopper.adapter.in.dto.command.CreateShopperCommand;
-import com.demo.book.springtdd.shopper.adapter.in.dto.query.IssueShopperToken;
+import com.demo.book.springtdd.shopper.adapter.in.dto.request.CreateShopperRequest;
+import com.demo.book.springtdd.shopper.adapter.in.dto.request.IssueShopperTokenRequest;
 import com.demo.book.springtdd.shopper.adapter.in.dto.result.AccessTokenCarrier;
 import com.demo.book.springtdd.shopper.support.IntegrationTest;
 import io.jsonwebtoken.Jwts;
@@ -24,7 +24,7 @@ public class POST_specs {
     @Test
     void 올바르게_요청하면_200_OK_상태코드와_접근토큰을_반환한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -37,7 +37,7 @@ public class POST_specs {
 
         ResponseEntity<String> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -52,7 +52,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_JWT_형식을_따른다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -65,7 +65,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -80,7 +80,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_올바른_알고리즘을_사용한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -93,7 +93,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -108,7 +108,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_만료_시간을_포함한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -121,7 +121,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -136,7 +136,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_24시간_후_만료된다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -149,7 +149,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -164,7 +164,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_올바른_발행자를_포함한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -177,7 +177,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -192,7 +192,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_발행_시간을_포함한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -205,7 +205,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -220,7 +220,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_고유_ID를_포함한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -233,7 +233,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -248,7 +248,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_shopper_스코프를_포함한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -261,7 +261,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -276,7 +276,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_사용자_이메일을_포함한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -289,7 +289,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -304,7 +304,7 @@ public class POST_specs {
     @Test
     void 접근_토큰은_사용자_ID를_포함한다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -317,7 +317,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -332,7 +332,7 @@ public class POST_specs {
     @Test
     void 같은_사용자로_발행된_토큰들은_서로_다른_JTI를_가진다(@Autowired TestRestTemplate client) {
         //arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -345,7 +345,7 @@ public class POST_specs {
         //act
         ResponseEntity<AccessTokenCarrier> response1 = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -354,7 +354,7 @@ public class POST_specs {
 
         ResponseEntity<AccessTokenCarrier> response2 = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         command.password()
                 ),
@@ -386,7 +386,7 @@ public class POST_specs {
             @Autowired TestRestTemplate client
     ) {
         // arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -399,7 +399,7 @@ public class POST_specs {
         // act
         ResponseEntity<Void> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         generateEmail(),
                         command.password()
                 ),
@@ -415,7 +415,7 @@ public class POST_specs {
             @Autowired TestRestTemplate client
     ) {
         // arrange
-        var command = new CreateShopperCommand(generateEmail(),
+        var command = new CreateShopperRequest(generateEmail(),
                 generateUsername(),
                 generatePassword());
 
@@ -428,7 +428,7 @@ public class POST_specs {
         // act
         ResponseEntity<Void> response = client.postForEntity(
                 "/shopper/issueToken",
-                new IssueShopperToken(
+                new IssueShopperTokenRequest(
                         command.email(),
                         generatePassword()
                 ),

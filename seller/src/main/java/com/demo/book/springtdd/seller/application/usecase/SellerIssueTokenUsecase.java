@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.seller.application.usecase;
 
 import com.demo.book.springtdd.infrastructure.JwtKeyHolder;
-import com.demo.book.springtdd.seller.adapter.in.dto.query.IssueSellerToken;
+import com.demo.book.springtdd.seller.application.port.in.query.IssueSellerTokenQuery;
 import com.demo.book.springtdd.seller.application.port.in.ForIssuingSellerToken;
 import com.demo.book.springtdd.seller.application.port.out.ReadSellerPort;
 import com.demo.book.springtdd.seller.domain.Seller;
@@ -26,7 +26,7 @@ public class SellerIssueTokenUsecase implements ForIssuingSellerToken {
     private final JwtKeyHolder jwtKeyHolder;
 
     @Override
-    public String issueToken(IssueSellerToken query) {
+    public String issueToken(IssueSellerTokenQuery query) {
         Seller seller = readSellerPort.findByEmail(query.email());
 
         if (!passwordEncoder.matches(query.password(), seller.getHashedPassword())) {

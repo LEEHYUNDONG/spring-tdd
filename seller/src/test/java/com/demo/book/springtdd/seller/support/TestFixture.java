@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.seller.support;
 
-import com.demo.book.springtdd.seller.adapter.in.dto.command.CreateSellerCommand;
-import com.demo.book.springtdd.seller.adapter.in.dto.query.IssueSellerToken;
+import com.demo.book.springtdd.seller.adapter.in.dto.request.CreateSellerRequest;
+import com.demo.book.springtdd.seller.adapter.in.dto.request.IssueSellerTokenRequest;
 import com.demo.book.springtdd.seller.adapter.in.dto.result.AccessTokenCarrier;
 import com.demo.book.springtdd.seller.adapter.in.dto.view.SellerMeView;
 import io.jsonwebtoken.Claims;
@@ -45,7 +45,7 @@ public record TestFixture(
     public String issueSellerToken(String email, String password) {
         AccessTokenCarrier carrier = client.postForObject(
                 "/seller/issueToken",
-                new IssueSellerToken(email, password),
+                new IssueSellerTokenRequest(email, password),
                 AccessTokenCarrier.class);
         return requireNonNull(carrier).accessToken();
     }
@@ -75,7 +75,7 @@ public record TestFixture(
     }
 
     public void createSeller(String email, String username, String password, String contactEmail) {
-        var command = new CreateSellerCommand(email, username, password, contactEmail);
+        var command = new CreateSellerRequest(email, username, password, contactEmail);
         ensureSuccessful(
                 client.postForEntity("/seller/signUp", command, Void.class),
                 command);

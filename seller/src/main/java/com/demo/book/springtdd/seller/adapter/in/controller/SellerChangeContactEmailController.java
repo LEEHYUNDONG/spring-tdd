@@ -1,8 +1,8 @@
 package com.demo.book.springtdd.seller.adapter.in.controller;
 
-import com.demo.book.springtdd.seller.adapter.in.dto.command.ChangeContactEmailCommand;
-import com.demo.book.springtdd.seller.domain.Seller;
-import com.demo.book.springtdd.seller.adapter.out.persistence.repository.SellerRepository;
+import com.demo.book.springtdd.seller.adapter.in.dto.command.ChangeContactEmailRequest;
+import com.demo.book.springtdd.seller.application.port.in.ForChangingContactEmail;
+import com.demo.book.springtdd.seller.application.port.in.command.ChangeContactEmailCommand;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,21 +15,20 @@ import static com.demo.book.springtdd.support.UserPropertyValidator.isEmailValid
 
 @RestController
 public record SellerChangeContactEmailController(
-    SellerRepository sellerRepository
+    ForChangingContactEmail forChangingContactEmail
 ) {
     @PostMapping("/seller/changeContactEmail")
     ResponseEntity<?> changeContactEmail(
-            @RequestBody ChangeContactEmailCommand command,
+            @RequestBody ChangeContactEmailRequest request,
             Principal user
     ) {
-        if (!isEmailValid(command.contactEmail())) {
-            // Return a 400 Bad Request if the email is invalid
+        if (!isEmailValid(request.contactEmail())) {
             return ResponseEntity.badRequest().build();
         }
         UUID id = UUID.fromString(user.getName());
-        Seller seller = sellerRepository.findById(id).orElseThrow();
-        seller.setContactEmail(command.contactEmail());
-        sellerRepository.save(seller);
+        forChangingContactEmail.changeContactEmail(
+                new ChangeContactEmailCommand(id, request.contactEmail())
+        );
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.shopper.application.usecase;
 
 import com.demo.book.springtdd.infrastructure.JwtKeyHolder;
-import com.demo.book.springtdd.shopper.adapter.in.dto.query.IssueShopperToken;
+import com.demo.book.springtdd.shopper.application.port.in.query.IssueShopperTokenQuery;
 import com.demo.book.springtdd.shopper.application.port.in.ForIssuingShopperToken;
 import com.demo.book.springtdd.shopper.application.port.out.ReadShopperPort;
 import com.demo.book.springtdd.shopper.domain.Shopper;
@@ -26,7 +26,7 @@ public class ShopperIssueTokenUsecase implements ForIssuingShopperToken {
     private final JwtKeyHolder jwtKeyHolder;
 
     @Override
-    public String issueToken(IssueShopperToken query) {
+    public String issueToken(IssueShopperTokenQuery query) {
         Shopper shopper = readShopperPort.findByEmail(query.email());
 
         if (!passwordEncoder.matches(query.password(), shopper.getHashedPassword())) {

@@ -1,8 +1,8 @@
 package com.demo.book.springtdd.shopper.application.port.in;
 
-import com.demo.book.springtdd.shopper.adapter.in.dto.query.IssueShopperToken;
+import com.demo.book.springtdd.shopper.application.port.in.query.IssueShopperTokenQuery;
 
 public interface ForIssuingShopperToken {
 
-    String issueToken(IssueShopperToken query);
+    String issueToken(IssueShopperTokenQuery query);
 }

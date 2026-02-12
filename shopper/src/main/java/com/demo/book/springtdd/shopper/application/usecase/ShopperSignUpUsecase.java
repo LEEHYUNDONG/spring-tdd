@@ -1,6 +1,6 @@
 package com.demo.book.springtdd.shopper.application.usecase;
 
-import com.demo.book.springtdd.shopper.adapter.in.dto.command.CreateShopperCommand;
+import com.demo.book.springtdd.shopper.application.port.in.command.CreateShopperCommand;
 import com.demo.book.springtdd.shopper.application.port.in.ForCreatingShopper;
 import com.demo.book.springtdd.shopper.application.port.out.CreateShopperPort;
 import com.demo.book.springtdd.shopper.domain.Shopper;

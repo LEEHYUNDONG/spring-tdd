@@ -1,4 +1,4 @@
-package com.demo.book.springtdd.order.adapter.in.dto.command;
+package com.demo.book.springtdd.order.adapter.in.dto;
 
 import java.util.UUID;
 

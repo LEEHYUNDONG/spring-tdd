@@ -1,4 +1,4 @@
-package com.demo.book.springtdd.order.adapter.in.dto.view;
+package com.demo.book.springtdd.order.adapter.in.dto;
 
 import java.math.BigDecimal;
 import java.util.UUID;

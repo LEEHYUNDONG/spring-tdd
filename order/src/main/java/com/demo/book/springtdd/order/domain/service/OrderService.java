@@ -1,8 +1,10 @@
 package com.demo.book.springtdd.order.domain.service;
 
 import com.demo.book.springtdd.exception.InvalidCommandException;
-import com.demo.book.springtdd.order.adapter.out.grpc.ProductGrpcClient;
+import com.demo.book.springtdd.order.adapter.out.grpc.ProductGrpcAdapter;
 import com.demo.book.springtdd.order.domain.Order;
+import com.demo.book.springtdd.order.domain.port.in.OrderUsecase;
+import com.demo.book.springtdd.order.domain.port.out.ProductGrpcPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,16 +15,17 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class OrderService {
+public class OrderService implements OrderUsecase {
 
-    private final ProductGrpcClient productGrpcClient;
+    private final ProductGrpcPort productGrpcPort;
 
     public Order createOrder(UUID productId, int quantity) {
+        // 이후 재고 차감 adapter를 붙여야할까?
         if (quantity <= 0) {
             throw new InvalidCommandException();
         }
 
-        var product = productGrpcClient.getProductById(productId);
+        var product = productGrpcPort.getProductById(productId);
 
         //debug
         log.debug("product {}", product);
@@ -31,7 +34,7 @@ public class OrderService {
             throw new InvalidCommandException();
         }
 
-        productGrpcClient.decreaseStock(productId, quantity);
+        productGrpcPort.decreaseStock(productId, quantity);
 
         BigDecimal totalAmount = product.priceAmount().multiply(BigDecimal.valueOf(quantity));
         return new Order(

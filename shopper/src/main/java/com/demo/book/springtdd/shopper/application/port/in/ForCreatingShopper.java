@@ -1,6 +1,6 @@
 package com.demo.book.springtdd.shopper.application.port.in;
 
-import com.demo.book.springtdd.shopper.application.port.in.command.CreateShopperCommand;
+import com.demo.book.springtdd.shopper.domain.CreateShopperCommand;
 
 public interface ForCreatingShopper {
 

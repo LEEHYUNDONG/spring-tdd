@@ -1,6 +1,6 @@
 package com.demo.book.springtdd.shopper.application.usecase;
 
-import com.demo.book.springtdd.shopper.application.port.in.command.CreateShopperCommand;
+import com.demo.book.springtdd.shopper.domain.CreateShopperCommand;
 import com.demo.book.springtdd.shopper.application.port.in.ForCreatingShopper;
 import com.demo.book.springtdd.shopper.application.port.out.CreateShopperPort;
 import com.demo.book.springtdd.shopper.domain.Shopper;
@@ -19,14 +19,7 @@ public class ShopperSignUpUsecase implements ForCreatingShopper {
 
     @Override
     public void signUp(CreateShopperCommand command) {
-        String hashedPassword = passwordEncoder.encode(command.password());
-        UUID id = UUID.randomUUID();
-
-        var shopper = new Shopper();
-        shopper.setEmail(command.email());
-        shopper.setUsername(command.username());
-        shopper.setHashedPassword(hashedPassword);
-        shopper.setId(id);
+        var shopper = Shopper.register(command, passwordEncoder);
 
         createShopperPort.create(shopper);
     }

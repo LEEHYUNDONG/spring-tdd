@@ -1,4 +1,4 @@
-package com.demo.book.springtdd.shopper.application.port.in.result;
+package com.demo.book.springtdd.shopper.domain;
 
 import java.util.UUID;
 

@@ -2,7 +2,7 @@ package com.demo.book.springtdd.shopper.adapter.in.controller;
 
 import com.demo.book.springtdd.shopper.adapter.in.dto.request.CreateShopperRequest;
 import com.demo.book.springtdd.shopper.application.port.in.ForCreatingShopper;
-import com.demo.book.springtdd.shopper.application.port.in.command.CreateShopperCommand;
+import com.demo.book.springtdd.shopper.domain.CreateShopperCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

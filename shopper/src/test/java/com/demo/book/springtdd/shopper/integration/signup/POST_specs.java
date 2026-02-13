@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.shopper.integration.signup;
 
 import com.demo.book.springtdd.shopper.adapter.in.dto.request.CreateShopperRequest;
-import com.demo.book.springtdd.shopper.adapter.out.persistence.repository.ShopperRepository;
+import com.demo.book.springtdd.shopper.adapter.out.persistence.repository.JpaShopperRepository;
 import com.demo.book.springtdd.shopper.support.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -240,7 +240,7 @@ public class POST_specs {
     }
 
     @Test
-    void 비밀번호를_올바르게_암호화한다(@Autowired PasswordEncoder passwordEncoder, @Autowired ShopperRepository shopperRepository, @Autowired TestRestTemplate client) {
+    void 비밀번호를_올바르게_암호화한다(@Autowired PasswordEncoder passwordEncoder, @Autowired JpaShopperRepository jpaShopperRepository, @Autowired TestRestTemplate client) {
         // arrange
         String email = generateEmail();
         String username = generateUsername();
@@ -254,7 +254,7 @@ public class POST_specs {
                 Void.class
         );
         // 저장된 사용자 조회
-        var savedShopper = shopperRepository.findByEmail(email)
+        var savedShopper = jpaShopperRepository.findByEmail(email)
                 .orElseThrow();
 
         // assert

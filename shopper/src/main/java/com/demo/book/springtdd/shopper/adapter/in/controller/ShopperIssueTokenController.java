@@ -3,7 +3,7 @@ package com.demo.book.springtdd.shopper.adapter.in.controller;
 import com.demo.book.springtdd.shopper.adapter.in.dto.request.IssueShopperTokenRequest;
 import com.demo.book.springtdd.shopper.adapter.in.dto.result.AccessTokenCarrier;
 import com.demo.book.springtdd.shopper.application.port.in.ForIssuingShopperToken;
-import com.demo.book.springtdd.shopper.application.port.in.query.IssueShopperTokenQuery;
+import com.demo.book.springtdd.shopper.domain.IssueShopperTokenQuery;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

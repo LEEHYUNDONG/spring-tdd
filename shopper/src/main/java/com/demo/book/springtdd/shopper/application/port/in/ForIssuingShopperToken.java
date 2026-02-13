@@ -1,6 +1,6 @@
 package com.demo.book.springtdd.shopper.application.port.in;
 
-import com.demo.book.springtdd.shopper.application.port.in.query.IssueShopperTokenQuery;
+import com.demo.book.springtdd.shopper.domain.IssueShopperTokenQuery;
 
 public interface ForIssuingShopperToken {
 

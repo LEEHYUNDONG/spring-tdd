@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.shopper.application.usecase;
 
 import com.demo.book.springtdd.infrastructure.JwtKeyHolder;
-import com.demo.book.springtdd.shopper.application.port.in.query.IssueShopperTokenQuery;
+import com.demo.book.springtdd.shopper.domain.IssueShopperTokenQuery;
 import com.demo.book.springtdd.shopper.application.port.in.ForIssuingShopperToken;
 import com.demo.book.springtdd.shopper.application.port.out.ReadShopperPort;
 import com.demo.book.springtdd.shopper.domain.Shopper;

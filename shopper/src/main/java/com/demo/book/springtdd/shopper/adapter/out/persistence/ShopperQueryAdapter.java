@@ -1,6 +1,7 @@
 package com.demo.book.springtdd.shopper.adapter.out.persistence;
 
-import com.demo.book.springtdd.shopper.adapter.out.persistence.repository.ShopperRepository;
+import com.demo.book.springtdd.shopper.adapter.out.persistence.entity.ShopperJpaEntity;
+import com.demo.book.springtdd.shopper.adapter.out.persistence.repository.JpaShopperRepository;
 import com.demo.book.springtdd.shopper.application.port.out.ReadShopperPort;
 import com.demo.book.springtdd.shopper.domain.Shopper;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,15 +14,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShopperQueryAdapter implements ReadShopperPort {
 
-    private final ShopperRepository shopperRepository;
+    private final JpaShopperRepository jpaShopperRepository;
 
     @Override
     public Shopper findByEmail(String email) {
-        return shopperRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        return jpaShopperRepository.findByEmail(email)
+                .orElseThrow(EntityNotFoundException::new)
+                .toDomain();
     }
 
     @Override
     public Shopper findById(UUID id) {
-        return shopperRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return jpaShopperRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new)
+                .toDomain();
     }
 }

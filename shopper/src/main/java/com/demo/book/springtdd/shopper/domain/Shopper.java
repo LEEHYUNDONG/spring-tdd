@@ -1,27 +1,40 @@
 package com.demo.book.springtdd.shopper.domain;
 
-
-import jakarta.persistence.*;
-import lombok.Data;
+import com.demo.book.springtdd.shopper.adapter.out.persistence.entity.ShopperJpaEntity;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
 
-@Entity
-@Data
+@Getter
+@Setter
 public class Shopper {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long shopKey;
 
-    @Column(unique = true)
     private UUID id;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(unique = true)
     private String username;
-
     private String hashedPassword;
+
+
+    public static Shopper register(CreateShopperCommand command, PasswordEncoder passwordEncoder) {
+
+        Shopper shopper = new Shopper();
+        shopper.setId(UUID.randomUUID());
+        shopper.setEmail(command.email());
+        shopper.setUsername(command.username());
+        shopper.setHashedPassword(passwordEncoder.encode(command.password()));
+
+        return shopper;
+    }
+
+    public Shopper toDomain(ShopperJpaEntity jpaEntity) {
+        Shopper shopper = new Shopper();
+        shopper.setUsername(jpaEntity.getUsername());
+        shopper.setEmail(jpaEntity.getEmail());
+        shopper.setHashedPassword(jpaEntity.getHashedPassword());
+        return shopper;
+    }
 
 }

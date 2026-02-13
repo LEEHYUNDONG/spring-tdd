@@ -1,4 +1,4 @@
-package com.demo.book.springtdd.shopper.application.port.in.query;
+package com.demo.book.springtdd.shopper.domain;
 
 public record IssueShopperTokenQuery(String email, String password) {
 }

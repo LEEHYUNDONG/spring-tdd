@@ -1,4 +1,4 @@
-package com.demo.book.springtdd.infrastructure;
+package com.demo.book.springtdd.infrastructure.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

@@ -1,6 +1,7 @@
-package com.demo.book.springtdd.infrastructure;
+package com.demo.book.springtdd.infrastructure.config;
 
 
+import com.demo.book.springtdd.infrastructure.JwtKeyHolder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

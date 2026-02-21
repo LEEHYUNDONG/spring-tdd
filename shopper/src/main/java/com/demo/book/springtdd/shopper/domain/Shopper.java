@@ -1,7 +1,7 @@
 package com.demo.book.springtdd.shopper.domain;
 
 import com.demo.book.springtdd.shopper.adapter.out.persistence.entity.ShopperJpaEntity;
-import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = {"id"})
 public class Shopper {
 
     private UUID id;

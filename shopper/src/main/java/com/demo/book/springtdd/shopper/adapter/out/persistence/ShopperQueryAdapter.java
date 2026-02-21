@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -24,9 +25,7 @@ public class ShopperQueryAdapter implements ReadShopperPort {
     }
 
     @Override
-    public Shopper findById(UUID id) {
-        return jpaShopperRepository.findById(id)
-                .orElseThrow(EntityNotFoundException::new)
-                .toDomain();
+    public Optional<Shopper> findById(UUID id) {
+        return jpaShopperRepository.findById(id).map(ShopperJpaEntity::toDomain);
     }
 }

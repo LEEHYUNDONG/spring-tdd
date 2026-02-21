@@ -1,6 +1,7 @@
 package com.demo.book.springtdd.shopper.adapter.out.persistence.entity;
 
 import com.demo.book.springtdd.shopper.domain.Shopper;
+import com.demo.book.springtdd.shopper.domain.ShopperId;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,6 +43,10 @@ public class ShopperJpaEntity {
 
     public Shopper toDomain() {
         Shopper shopper = new Shopper();
+
+//        ShopperId shopperId = new ShopperId(this.id);
+//        System.out.println(shopperId.getValue().toString() + "   " + this.id);
+//        shopper.setId(shopperId);
         shopper.setId(this.id);
         shopper.setEmail(this.email);
         shopper.setUsername(this.username);

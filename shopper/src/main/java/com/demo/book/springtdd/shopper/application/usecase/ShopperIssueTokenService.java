@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class ShopperIssueTokenUsecase implements ForIssuingShopperToken {
+public class ShopperIssueTokenService implements ForIssuingShopperToken {
 
     private final ReadShopperPort readShopperPort;
     private final PasswordEncoder passwordEncoder;

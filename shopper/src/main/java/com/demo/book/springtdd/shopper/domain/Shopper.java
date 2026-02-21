@@ -30,12 +30,4 @@ public class Shopper {
         return shopper;
     }
 
-    public Shopper toDomain(ShopperJpaEntity jpaEntity) {
-        Shopper shopper = new Shopper();
-        shopper.setUsername(jpaEntity.getUsername());
-        shopper.setEmail(jpaEntity.getEmail());
-        shopper.setHashedPassword(jpaEntity.getHashedPassword());
-        return shopper;
-    }
-
 }

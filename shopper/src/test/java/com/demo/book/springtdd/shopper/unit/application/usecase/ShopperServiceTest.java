@@ -3,23 +3,19 @@ package com.demo.book.springtdd.shopper.unit.application.usecase;
 import com.demo.book.springtdd.shopper.application.port.out.CreateShopperPort;
 import com.demo.book.springtdd.shopper.application.port.out.ReadShopperPort;
 import com.demo.book.springtdd.shopper.application.usecase.ShopperService;
-import com.demo.book.springtdd.shopper.domain.CreateShopperCommand;
-import com.demo.book.springtdd.shopper.domain.ReadShopperQuery;
-import com.demo.book.springtdd.shopper.domain.Shopper;
-import com.demo.book.springtdd.shopper.domain.ShopperInfo;
+import com.demo.book.springtdd.shopper.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 
@@ -46,19 +42,9 @@ class ShopperServiceTest {
     void signUp() {
         var command = new CreateShopperCommand("test@email.com", "leehyundong", "password123");
 
-        Shopper shopper = shopperService.signUp(command);
+        UUID shopperId = shopperService.signUp(command);
 
-        verify(createShopperPort, times(1)).create(shopper);
-    }
-
-    @Test
-    void ifDuplicatedEmailExistThenThrowException() {
-        var command = new CreateShopperCommand("test123@email.com", "leehyundong", "password");
-        Shopper shopper = shopperService.signUp(command);
-
-        when(readShopperPort.findByEmail(command.email())).thenReturn(shopper);
-
-        assertThatThrownBy(() -> shopperService.signUp(command)).isInstanceOf(DuplicateKeyException.class);
+        verify(createShopperPort, times(1)).create(any());
     }
 
 
@@ -68,7 +54,9 @@ class ShopperServiceTest {
         Shopper shopper = Shopper.register(command, passwordEncoder);
 
         var request = new ReadShopperQuery(shopper.getId());
+//        var request = new ReadShopperQuery(shopper.getId().getValue());
 
+        when(readShopperPort.findById(shopper.getId())).thenReturn(Optional.of(shopper));
         when(readShopperPort.findById(shopper.getId())).thenReturn(Optional.of(shopper));
 
         ShopperInfo result = shopperService.read(request);

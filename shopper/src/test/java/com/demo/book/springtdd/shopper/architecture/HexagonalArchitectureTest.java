@@ -88,7 +88,7 @@ class HexagonalArchitectureTest {
         void usecases_should_be_in_usecase_package() {
             ArchRule rule = classes()
                     .that().haveSimpleNameEndingWith("Usecase")
-                    .should().resideInAPackage("..usecase..");
+                    .should().resideInAPackage("..port.in..");
 
             rule.check(classes);
         }

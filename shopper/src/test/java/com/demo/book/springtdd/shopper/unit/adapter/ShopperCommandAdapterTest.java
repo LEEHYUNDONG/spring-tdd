@@ -4,6 +4,7 @@ import com.demo.book.springtdd.shopper.adapter.out.persistence.ShopperCommandAda
 import com.demo.book.springtdd.shopper.adapter.out.persistence.entity.ShopperJpaEntity;
 import com.demo.book.springtdd.shopper.adapter.out.persistence.repository.JpaShopperRepository;
 import com.demo.book.springtdd.shopper.domain.Shopper;
+import com.demo.book.springtdd.shopper.domain.ShopperId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

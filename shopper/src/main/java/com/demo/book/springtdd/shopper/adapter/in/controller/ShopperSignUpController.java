@@ -43,6 +43,7 @@ public class ShopperSignUpController {
     @GetMapping("/shopper/me")
     public ShopperMeView me(Principal principal) {
         UUID id = UUID.fromString(principal.getName());
+        System.out.println("**id = " + id);
         ShopperInfo shopperInfo = shopperUsecase.read(new ReadShopperQuery(id));
         return new ShopperMeView(shopperInfo.id(), shopperInfo.email(), shopperInfo.username());
     }

@@ -72,7 +72,7 @@ public class GET_specs {
                 ShopperMeView.class);
 
         // Assert
-        assertThat(requireNonNull(response1.getBody().id())).isNotEqualTo(requireNonNull(response2.getBody().id()));
+        assertThat(requireNonNull(response1.getBody()).id()).isNotEqualTo(requireNonNull(response2.getBody()).id());
     }
 
     @Test

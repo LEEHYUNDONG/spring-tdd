@@ -1,13 +1,12 @@
 package com.demo.book.springtdd.shopper.application.port.in;
 
-import com.demo.book.springtdd.shopper.domain.CreateShopperCommand;
-import com.demo.book.springtdd.shopper.domain.ReadShopperQuery;
-import com.demo.book.springtdd.shopper.domain.Shopper;
-import com.demo.book.springtdd.shopper.domain.ShopperInfo;
+import com.demo.book.springtdd.shopper.domain.*;
+
+import java.util.UUID;
 
 public interface ShopperUsecase {
 
-    Shopper signUp(CreateShopperCommand command);
+    UUID signUp(CreateShopperCommand command);
 
     ShopperInfo read(ReadShopperQuery query);
 }

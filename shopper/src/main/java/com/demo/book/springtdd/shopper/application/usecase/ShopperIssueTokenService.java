@@ -46,7 +46,7 @@ public class ShopperIssueTokenService implements ForIssuingShopperToken {
                 .setHeaderParam("typ", "JWT")
                 .setId(UUID.randomUUID().toString()) // jti (JWT ID)
                 .setIssuer(jwtKeyHolder.issuer()) // iss (Issuer)
-                .setSubject(shopper.getId().toString()) // sub (Subject)
+                .setSubject(shopper.getId().getValue().toString()) // sub (Subject)
                 .setIssuedAt(Date.from(now)) // iat (Issued At)
                 .setExpiration(Date.from(expiration)) // exp (Expiration Time)
                 .claim("scp", "shopper") // scope

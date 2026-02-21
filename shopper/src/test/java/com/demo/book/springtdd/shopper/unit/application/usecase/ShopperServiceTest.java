@@ -42,7 +42,7 @@ class ShopperServiceTest {
     void signUp() {
         var command = new CreateShopperCommand("test@email.com", "leehyundong", "password123");
 
-        UUID shopperId = shopperService.signUp(command);
+        ShopperId shopperId = shopperService.signUp(command);
 
         verify(createShopperPort, times(1)).create(any());
     }
@@ -53,15 +53,13 @@ class ShopperServiceTest {
         var command = new CreateShopperCommand("test123@email.com", "leehyundong", "password");
         Shopper shopper = Shopper.register(command, passwordEncoder);
 
-        var request = new ReadShopperQuery(shopper.getId());
-//        var request = new ReadShopperQuery(shopper.getId().getValue());
+        var request = new ReadShopperQuery(shopper.getId().getValue());
 
-        when(readShopperPort.findById(shopper.getId())).thenReturn(Optional.of(shopper));
-        when(readShopperPort.findById(shopper.getId())).thenReturn(Optional.of(shopper));
+        when(readShopperPort.findById(shopper.getId().getValue())).thenReturn(Optional.of(shopper));
 
         ShopperInfo result = shopperService.read(request);
 
-        assertThat(result.id()).isEqualTo(shopper.getId());
+        assertThat(result.id()).isEqualTo(shopper.getId().getValue());
         assertThat(result.email()).isEqualTo(command.email());
         assertThat(result.username()).isEqualTo(command.username());
     }

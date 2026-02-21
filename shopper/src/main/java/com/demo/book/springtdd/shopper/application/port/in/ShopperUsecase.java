@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface ShopperUsecase {
 
-    UUID signUp(CreateShopperCommand command);
+    ShopperId signUp(CreateShopperCommand command);
 
     ShopperInfo read(ReadShopperQuery query);
 }

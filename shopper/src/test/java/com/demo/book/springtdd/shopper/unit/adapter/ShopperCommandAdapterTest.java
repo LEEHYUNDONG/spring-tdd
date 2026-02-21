@@ -34,7 +34,7 @@ class ShopperCommandAdapterTest {
     void create_shouldConvertDomainToJpaEntityAndSave() {
         // arrange
         Shopper shopper = new Shopper();
-        shopper.setId(UUID.randomUUID());
+        shopper.setId(ShopperId.generate());
         shopper.setEmail("test@email.com");
         shopper.setUsername("testuser");
         shopper.setHashedPassword("hashedPassword123");

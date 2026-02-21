@@ -25,14 +25,14 @@ public class ShopperService implements ShopperUsecase {
                 .orElseThrow(EntityNotFoundException::new);
 
         return new ShopperInfo(
-                shopper.getId(),
+                shopper.getId().getValue(),
                 shopper.getEmail(),
                 shopper.getUsername()
         );
     }
 
     @Override
-    public UUID signUp(CreateShopperCommand command) {
+    public ShopperId signUp(CreateShopperCommand command) {
         var shopper = Shopper.register(command, passwordEncoder);
 
         createShopperPort.create(shopper);

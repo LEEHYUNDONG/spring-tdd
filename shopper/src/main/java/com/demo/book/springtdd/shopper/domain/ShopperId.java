@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Getter
 @Setter(AccessLevel.PRIVATE)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ShopperId {
 
+    @EqualsAndHashCode.Include
     private UUID value;
 
     protected ShopperId() {}
@@ -25,5 +25,9 @@ public class ShopperId {
         return new ShopperId(UUID.randomUUID());
     }
 
+//    @Override
+//    public String toString() {
+//        return value.toString();
+//    }
 
 }

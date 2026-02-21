@@ -34,7 +34,7 @@ public class ShopperJpaEntity {
 
     public static ShopperJpaEntity from(Shopper shopper) {
         ShopperJpaEntity entity = new ShopperJpaEntity();
-        entity.setId(shopper.getId());
+        entity.setId(shopper.getId().getValue());
         entity.setEmail(shopper.getEmail());
         entity.setUsername(shopper.getUsername());
         entity.setHashedPassword(shopper.getHashedPassword());
@@ -44,10 +44,9 @@ public class ShopperJpaEntity {
     public Shopper toDomain() {
         Shopper shopper = new Shopper();
 
-//        ShopperId shopperId = new ShopperId(this.id);
-//        System.out.println(shopperId.getValue().toString() + "   " + this.id);
-//        shopper.setId(shopperId);
-        shopper.setId(this.id);
+        ShopperId shopperId = new ShopperId(this.id);
+        System.out.println(shopperId.getValue().toString() + "   " + this.id);
+        shopper.setId(shopperId);
         shopper.setEmail(this.email);
         shopper.setUsername(this.username);
         shopper.setHashedPassword(this.hashedPassword);
